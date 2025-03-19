@@ -1,0 +1,16 @@
+node_modules
+dist
+out
+.DS_Store
+.eslintcache
+*.log*
+
+# Playwright
+/test-results/
+/playwright-report/
+/blob-report/
+/playwright/.cache/
+
+/tests/test-user-data
+/tests/notes/*
+!/tests/notes/example.md

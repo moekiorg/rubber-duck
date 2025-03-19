@@ -1,0 +1,53 @@
+@import 'tailwindcss';
+
+main,
+a,
+button {
+  -webkit-app-region: no-drag;
+}
+
+* {
+  scrollbar-color: rgba(0, 0, 0, 0.3) transparent;
+}
+
+.cm-focused {
+  outline: none !important;
+}
+
+.cm-activeLine {
+  background-color: transparent !important;
+}
+
+.cm-editor {
+  height: auto !important;
+  max-height: none !important;
+}
+
+.cm-scroller {
+  font-family:
+    ui-sans-serif,
+    -apple-system,
+    BlinkMacSystemFont,
+    'Segoe UI',
+    Helvetica,
+    'Apple Color Emoji',
+    Arial,
+    sans-serif,
+    'Segoe UI Emoji',
+    'Segoe UI Symbol' !important;
+}
+
+.cm-panels-bottom {
+  position: fixed !important;
+  right: 0 !important;
+  left: 200px !important;
+}
+
+.cm-search {
+  font-size: 14px;
+}
+
+.cm-search label {
+  display: inline-flex;
+  align-items: center;
+}
