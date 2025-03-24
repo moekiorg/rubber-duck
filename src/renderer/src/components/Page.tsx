@@ -63,6 +63,9 @@ export default function Page(): JSX.Element {
       if (result) {
         setFiles((prevFiles) => prevFiles.filter((file) => file.title !== fileTitle))
         setAllFiles((prevFiles) => prevFiles.filter((file) => file.title !== fileTitle))
+        if (fileTitle === currentTitle) {
+          setCurrentFile(null)
+        }
       }
     })
 
