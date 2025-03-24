@@ -139,7 +139,7 @@ export default function Page(): JSX.Element {
           query={query}
         />
         <main className="w-full h-[calc(100vh-30px)] overflow-y-scroll">
-          {currentFile && (
+          {currentFile ? (
             <Editor
               isSidebarVisible={isSidebarVisible}
               currentTitle={currentTitle}
@@ -148,6 +148,8 @@ export default function Page(): JSX.Element {
               files={allFiles}
               onTitleChange={handleTitleChange}
             />
+          ) : (
+            <div className={`w-full h-full grow bg-gray-50`}></div>
           )}
         </main>
       </div>
