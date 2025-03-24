@@ -1,37 +1,28 @@
 import { join } from 'path'
 import { store } from '../lib/store'
-import { promises, readdirSync } from 'fs'
-
-export let isSelfEditing = false
+import { promises, readdirSync, statSync } from 'fs'
 
 export const handleFileWrite = async (
   _: Electron.IpcMainInvokeEvent,
   filename: string,
   body: string,
-  previousFilename: string
+  id: string
 ): Promise<boolean> => {
   const dirPath = store.get('path') as string
-  const oldFilePath = join(dirPath, `${previousFilename}.md`)
+  const files = readdirSync(dirPath).map((f) => {
+    const stats = statSync(dirPath + '/' + f)
+    return {
+      id: `${stats.dev}-${stats.ino}`,
+      filename: f,
+      mtime: stats.mtime.getTime()
+    }
+  })
+
   const newFilePath = join(dirPath, `${filename}.md`)
+  const oldFilePath = join(dirPath, files.find((f) => f.id === id)!.filename!)
 
-  if (
-    previousFilename !== filename &&
-    readdirSync(dirPath).includes(newFilePath.split('/').pop()!)
-  ) {
-    return false
-  }
-
-  isSelfEditing = true
-
-  if (previousFilename !== filename) {
-    await promises.rename(oldFilePath, newFilePath)
-  }
-
+  await promises.rename(oldFilePath, newFilePath)
   await promises.writeFile(newFilePath, body, 'utf-8')
-
-  setTimeout(() => {
-    isSelfEditing = false
-  }, 100)
 
   return true
 }

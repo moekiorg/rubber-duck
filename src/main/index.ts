@@ -4,7 +4,7 @@ import { createWindow } from './lib/create-window'
 import { handleDirOpen } from './listeners/handle-dir-open'
 import { handleFilesGet } from './listeners/handle-files-get'
 import { handleBodyGet } from './listeners/handle-body-get'
-import { handleFileWrite, isSelfEditing } from './listeners/handle-file-write'
+import { handleFileWrite } from './listeners/handle-file-write'
 import { handleFileCreate } from './listeners/handle-file-create'
 import { handleFileDelete } from './listeners/handle-file-delete'
 import { store } from './lib/store'
@@ -29,12 +29,12 @@ app.whenReady().then(() => {
     store.set('sidebar', true)
   }
 
-  ipcMain.on('show-context-menu', (event, fileTitle) => {
+  ipcMain.on('show-context-menu', (event, id) => {
     const menu = Menu.buildFromTemplate([
       {
         label: 'Delete',
         click: (): void => {
-          event.sender.send('delete-file', fileTitle)
+          event.sender.send('delete-file', id)
         }
       }
     ])
@@ -48,7 +48,7 @@ app.whenReady().then(() => {
     }
 
     watcher = watch(store.get('path') as string, (eventType, filename) => {
-      if (filename && eventType === 'change' && !isSelfEditing) {
+      if (filename && eventType === 'change') {
         mainWindow?.webContents.send('file-event:change', filename.replace(/.md$/, ''))
       }
     })

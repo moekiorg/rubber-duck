@@ -27,7 +27,6 @@ export default function Editor({
   const [editorVisible, setEditorVisible] = useState(true)
   const [currentBody, setCurrentBody] = useState('')
   const editor = useRef<ReactCodeMirrorRef>(null)
-  const [savedTitle, setSavedTitle] = useState('')
   const titleEditor = useRef<HTMLTextAreaElement>(null)
 
   const writeFile = useDebouncedCallback(async (t, b, target) => {
@@ -35,14 +34,13 @@ export default function Editor({
     if (!result) {
       return
     }
-    setSavedTitle(t)
   }, 500)
 
   const handleUpdate = (value: string): void => {
     if (files.find((f) => f !== currentFile && f.title === currentFile?.title)) {
       return
     }
-    writeFile(savedTitle, value, `${savedTitle}`)
+    writeFile(currentTitle, value, currentFile.id)
     setCurrentBody(value)
     onBodyChange(value)
   }
@@ -70,7 +68,7 @@ export default function Editor({
     }
     setCurrentTitle(value)
 
-    writeFile(`${title}`, currentBody, `${savedTitle}`)
+    writeFile(`${title}`, currentBody, currentFile.id)
 
     onTitleChange(value)
   }
@@ -97,14 +95,13 @@ export default function Editor({
     if (!currentFile) {
       return
     }
-    window.api.getBody(currentFile.title).then(setCurrentBody)
+    window.api.getBody(currentFile.id).then(setCurrentBody)
     setEditorVisible(false)
     setTimeout(() => setEditorVisible(true), 1)
   }, [currentFile, setCurrentTitle])
 
   useEffect(() => {
     setCurrentTitle(currentFile.title)
-    setSavedTitle(currentFile.title)
   }, [currentFile.title, setCurrentTitle])
 
   return (
