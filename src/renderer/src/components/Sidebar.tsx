@@ -39,7 +39,7 @@ const FileItem = ({
         to={`/notes/${title}`}
         state={{ id: title }}
         replace
-        className={`file-item w-full text-left block cursor-default rounded truncate p-2 ${isActive ? 'bg-gray-200' : ''}`}
+        className={`file-item h-full w-full text-left block cursor-default rounded truncate p-2 ${isActive ? 'bg-gray-200' : ''}`}
         onContextMenu={(e) => handleContextMenu(e, title)}
       >
         {title}
