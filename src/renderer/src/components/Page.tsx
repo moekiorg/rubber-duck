@@ -7,20 +7,24 @@ import Fuse from 'fuse.js'
 import Editor from './Editor'
 
 export interface File {
+  id: string
   title: string
+  mtime: number
 }
 
 export default function Page(): JSX.Element {
   const location = useLocation()
   const [files, setFiles] = useState<Array<File>>([])
   const [allFiles, setAllFiles] = useState<Array<File>>([])
-  const [currentTitle, setCurrentTitle] = useState('')
   const navigate = useNavigate()
+  const [currentId, setCurrentId] = useState<string | null>(null)
   const [currentFile, setCurrentFile] = useState<File | null>(null)
+  const [currentTitle, setCurrentTitle] = useState<string | null>(null)
   const [filteredFiles, setFilteredFiles] = useState<Array<File>>([])
   const [query, setQuery] = useState('')
   const [isSearchVisible, setIsSearchVisible] = useState(false)
   const [isSidebarVisible, setIsSidebarVisible] = useState(false)
+  const [isDeleted, setIsDeleted] = useState(false)
 
   useEffect(() => {
     window.api.getSidebarState().then((value) => {
@@ -38,19 +42,51 @@ export default function Page(): JSX.Element {
     }
   }, [isSearchVisible, setIsSidebarVisible, isSidebarVisible])
 
+  const handleCreate = useCallback(
+    async (t = null): Promise<void> => {
+      let title: string | null = t
+      let counter = 0
+      if (!t) {
+        do {
+          title = counter === 0 ? 'Untitled' : `Untitled${counter}`
+          counter++
+        } while (files.map((f) => f.title).includes(title))
+      }
+      const result = await window.api.createFile(title)
+      setFiles([result, ...files])
+      setAllFiles([result, ...files])
+      await navigate(`/notes/${result.title}`, {
+        replace: true,
+        state: { title: result.title }
+      })
+    },
+    [files, navigate]
+  )
+
   useEffect(() => {
-    setCurrentFile(
-      location.state ? allFiles.find((f) => f.title === location.state.id) || null : null
-    )
-  }, [location.state, allFiles])
+    const file = location.state
+      ? allFiles.find((f) => {
+          return f.title === location.state.title
+        }) || null
+      : null
+    if (allFiles.length > 0 && !file && location.pathname.match('notes') && !isDeleted) {
+      handleCreate(location.state.title)
+      return
+    }
+    setCurrentId(file?.id || null)
+    setCurrentFile(file)
+  }, [location.state, allFiles, handleCreate, location.pathname, isDeleted])
+
+  useEffect(() => {
+    setIsDeleted(false)
+  }, [location])
 
   const init = useCallback(async (): Promise<void> => {
     window.api
       .getFiles()
       .then(async (fs) => {
-        const files = fs.map((f) => ({ title: f }))
-        setFiles(files)
-        setAllFiles(files)
+        setFiles(fs)
+        setAllFiles(fs)
       })
       .catch(() => {
         navigate('/setup', { replace: true })
@@ -58,13 +94,16 @@ export default function Page(): JSX.Element {
   }, [navigate])
 
   useEffect(() => {
-    window.electron.ipcRenderer.on('delete-file', async (_, fileTitle) => {
-      const result = await window.api.deleteFile(fileTitle)
+    window.electron.ipcRenderer.on('delete-file', async (_, id) => {
+      const result = await window.api.deleteFile(id)
       if (result) {
-        setFiles((prevFiles) => prevFiles.filter((file) => file.title !== fileTitle))
-        setAllFiles((prevFiles) => prevFiles.filter((file) => file.title !== fileTitle))
-        if (fileTitle === currentTitle) {
+        setFiles((prevFiles) => prevFiles.filter((file) => file.id !== id))
+        setAllFiles((prevFiles) => prevFiles.filter((file) => file.id !== id))
+        if (id === currentId) {
           setCurrentFile(null)
+          setCurrentId(null)
+          setIsDeleted(true)
+          return
         }
       }
     })
@@ -72,13 +111,16 @@ export default function Page(): JSX.Element {
     return (): void => {
       window.electron.ipcRenderer.removeAllListeners('delete-file')
     }
-  }, [currentTitle])
+  }, [currentFile, currentId, navigate])
 
   useEffect(() => {
     window.electron.ipcRenderer.on('replace', async (_, title) => {
-      navigate(`/notes/${title}`, { replace: true, state: { id: title } })
+      navigate(`/notes/${title}`, {
+        replace: true,
+        state: { title }
+      })
     })
-  }, [])
+  }, [location.state, navigate])
 
   const handleQueryChange = (q): void => {
     setQuery(q)
@@ -89,13 +131,6 @@ export default function Page(): JSX.Element {
     const fuse = new Fuse(allFiles, { keys: ['title'] })
     setFilteredFiles(fuse.search(q).map((res) => res.item))
   }
-
-  const handleCreate = useCallback(async (): Promise<void> => {
-    const title = await window.api.createFile()
-    setFiles([{ title }, ...files])
-    setAllFiles([{ title }, ...files])
-    await navigate(`/notes/${title}`, { replace: true, state: { id: title } })
-  }, [files, navigate])
 
   const toggleSearchSection = useCallback((): void => {
     setIsSearchVisible(!isSearchVisible)
@@ -124,23 +159,29 @@ export default function Page(): JSX.Element {
   }, [toggleSearchSection])
 
   useEffect(() => {
-    window.electron.ipcRenderer.on('new', handleCreate)
+    window.electron.ipcRenderer.on('new', () => {
+      handleCreate()
+    })
 
     return (): void => {
       window.electron.ipcRenderer.removeAllListeners('new')
     }
-  }, [handleCreate])
+  }, [files, handleCreate])
 
   const handleTitleChange = (title): void => {
-    const f = files.map((f) => (f.title === currentTitle ? { ...f, title } : f))
-    setFiles(f)
+    if (!currentFile) {
+      return
+    }
+    const f = files.find((f) => f.id === currentFile.id)!
+    setFiles([{ ...f, title }, ...files.filter((f) => f.id !== currentFile.id)])
   }
 
   const handleBodyChange = (): void => {
     if (!currentFile) {
       return
     }
-    setFiles([{ title: currentTitle }, ...files.filter((f) => f.title !== currentTitle)])
+    const f = files.find((f) => f.id === currentFile.id)!
+    setFiles([f, ...files.filter((f) => f.id !== currentFile.id)])
   }
 
   return (
@@ -151,19 +192,20 @@ export default function Page(): JSX.Element {
           files={files}
           isVisible={isSidebarVisible}
           filteredFiles={filteredFiles}
-          currentTitle={currentTitle}
-          onCreate={handleCreate}
+          onCreate={() => handleCreate()}
           isSearchVisible={isSearchVisible}
           onChange={handleQueryChange}
+          currentFile={currentFile}
+          currentId={currentId}
           query={query}
         />
         <main className="w-full h-[calc(100vh-30px)] overflow-y-scroll">
           {currentFile ? (
             <Editor
               isSidebarVisible={isSidebarVisible}
-              currentTitle={currentTitle}
-              setCurrentTitle={setCurrentTitle}
               currentFile={currentFile}
+              currentTitle={currentTitle || ''}
+              setCurrentTitle={setCurrentTitle}
               files={allFiles}
               onTitleChange={handleTitleChange}
               onBodyChange={handleBodyChange}

@@ -6,30 +6,33 @@ import { FixedSizeList } from 'react-window'
 
 interface Props {
   files: Array<File>
-  currentTitle: string
   onCreate: () => void
   isSearchVisible: boolean
   onChange: (value: string) => void
   filteredFiles: Array<File>
   query: string
   isVisible: boolean
+  currentFile: File | null
+  currentId: string | null
 }
 
 const FileItem = ({
   title,
   isActive,
-  style
+  style,
+  id
 }: {
   title: string
   isActive: boolean
   style: React.CSSProperties | undefined
+  id: string
 }): JSX.Element => {
   const handleContextMenu = (
     e: MouseEvent<HTMLAnchorElement, globalThis.MouseEvent>,
-    fileTitle: string
+    id: string
   ): void => {
     e.preventDefault()
-    window.electron.ipcRenderer.send('show-context-menu', fileTitle)
+    window.electron.ipcRenderer.send('show-context-menu', id)
   }
 
   return (
@@ -37,10 +40,10 @@ const FileItem = ({
       <NavLink
         key={title}
         to={`/notes/${title}`}
-        state={{ id: title }}
+        state={{ title }}
         replace
         className={`file-item h-full w-full text-left block cursor-default rounded truncate p-2 ${isActive ? 'bg-gray-200' : ''}`}
-        onContextMenu={(e) => handleContextMenu(e, title)}
+        onContextMenu={(e) => handleContextMenu(e, id)}
       >
         {title}
       </NavLink>
@@ -50,12 +53,12 @@ const FileItem = ({
 
 export default function Sidebar({
   files,
-  currentTitle,
   onCreate,
   isSearchVisible,
   onChange,
   filteredFiles,
   query,
+  currentId,
   isVisible
 }: Props): JSX.Element {
   const [listHeight, setListHeight] = useState(0)
@@ -122,7 +125,8 @@ export default function Sidebar({
             return FileItem({
               style,
               title: file?.title,
-              isActive: file?.title === currentTitle
+              isActive: file.id === currentId,
+              id: file.id
             })
           }}
         </FixedSizeList>

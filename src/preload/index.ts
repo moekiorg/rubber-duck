@@ -1,13 +1,19 @@
 import { contextBridge, ipcRenderer } from 'electron'
 import { electronAPI } from '@electron-toolkit/preload'
 
+export interface File {
+  id: string
+  title: string
+  mtime: string
+}
+
 const api = {
   openFile: (): Promise<void> => ipcRenderer.invoke('dialog:openDir'),
-  getFiles: (): Promise<Array<string>> => ipcRenderer.invoke('getFiles'),
-  getBody: (title: string): Promise<string> => ipcRenderer.invoke('getBody', title),
-  writeFile: (title: string, body: string, previousTitle: string): Promise<boolean> =>
-    ipcRenderer.invoke('writeFile', title, body, previousTitle),
-  createFile: (): Promise<string> => ipcRenderer.invoke('createFile'),
+  getFiles: (): Promise<Array<File>> => ipcRenderer.invoke('getFiles'),
+  getBody: (id: string): Promise<string> => ipcRenderer.invoke('getBody', id),
+  writeFile: (title: string, body: string, id: string): Promise<boolean> =>
+    ipcRenderer.invoke('writeFile', title, body, id),
+  createFile: (title: string): Promise<File> => ipcRenderer.invoke('createFile', title),
   deleteFile: (title): Promise<boolean> => ipcRenderer.invoke('deleteFile', title),
   getSidebarState: (): Promise<boolean> => ipcRenderer.invoke('getSidebarState'),
   fetch: (title): Promise<void> => ipcRenderer.invoke('fetch', title)
