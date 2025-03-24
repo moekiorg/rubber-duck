@@ -65,6 +65,10 @@ export default function Page(): JSX.Element {
         setAllFiles((prevFiles) => prevFiles.filter((file) => file.title !== fileTitle))
       }
     })
+
+    return (): void => {
+      window.electron.ipcRenderer.removeAllListeners('delete-file')
+    }
   }, [])
 
   const handleQueryChange = (q): void => {
@@ -98,7 +102,6 @@ export default function Page(): JSX.Element {
     window.electron.ipcRenderer.on('open-directory', init)
 
     return (): void => {
-      window.electron.ipcRenderer.removeAllListeners('delete-file')
       window.electron.ipcRenderer.removeAllListeners('open-dir')
     }
   }, [init])
@@ -107,7 +110,7 @@ export default function Page(): JSX.Element {
     window.electron.ipcRenderer.on('search', toggleSearchSection)
 
     return (): void => {
-      window.electron.ipcRenderer.removeAllListeners('delete-file')
+      window.electron.ipcRenderer.removeAllListeners('search')
     }
   }, [toggleSearchSection])
 
