@@ -75,7 +75,10 @@ export default function Page(): JSX.Element {
     }
     setCurrentId(file?.id || null)
     setCurrentFile(file)
-  }, [location.state, allFiles, handleCreate, location.pathname, isDeleted])
+    if (file?.id !== currentId) {
+      setCurrentTitle(file?.title || null)
+    }
+  }, [location.state, allFiles, handleCreate, location.pathname, isDeleted, currentId])
 
   useEffect(() => {
     setIsDeleted(false)
