@@ -127,6 +127,13 @@ export default function Page(): JSX.Element {
     setFiles(f)
   }
 
+  const handleBodyChange = (): void => {
+    if (!currentFile) {
+      return
+    }
+    setFiles([currentFile, ...files.filter((f) => f.title !== currentTitle)])
+  }
+
   return (
     <>
       <Header title={currentTitle || ''} />
@@ -150,6 +157,7 @@ export default function Page(): JSX.Element {
               currentFile={currentFile}
               files={allFiles}
               onTitleChange={handleTitleChange}
+              onBodyChange={handleBodyChange}
             />
           ) : (
             <div className={`w-full h-full grow bg-gray-50`}></div>

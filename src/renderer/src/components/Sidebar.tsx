@@ -114,7 +114,7 @@ export default function Sidebar({
       >
         <FixedSizeList
           height={listHeight}
-          itemCount={query ? filteredFiles.length + 1 : files.length + 1}
+          itemCount={query ? filteredFiles.length : files.length}
           itemSize={32}
         >
           {({ style, index }) => {

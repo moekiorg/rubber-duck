@@ -12,6 +12,7 @@ interface Props {
   setCurrentTitle: (value: string) => void
   currentTitle: string
   isSidebarVisible: boolean
+  onBodyChange: (value: string) => void
 }
 
 export default function Editor({
@@ -20,7 +21,8 @@ export default function Editor({
   files,
   setCurrentTitle,
   currentTitle,
-  isSidebarVisible
+  isSidebarVisible,
+  onBodyChange
 }: Props): JSX.Element {
   const [editorVisible, setEditorVisible] = useState(true)
   const [currentBody, setCurrentBody] = useState('')
@@ -42,6 +44,7 @@ export default function Editor({
     }
     writeFile(savedTitle, value, `${savedTitle}`)
     setCurrentBody(value)
+    onBodyChange(value)
   }
 
   const handleTitleKeyDown = (e): void => {
