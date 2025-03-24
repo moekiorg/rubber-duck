@@ -21,7 +21,7 @@ test.beforeEach(async () => {
   if (existsSync(testNotesPath)) {
     const entries = readdirSync(testNotesPath)
     for (const entry of entries) {
-      if (entry !== 'example.md') {
+      if (!['example2.md', 'example.md'].includes(entry)) {
         rmSync(join(testNotesPath, entry), { recursive: true })
       }
     }
@@ -48,10 +48,13 @@ test('Scenario', async () => {
   await expect(page.getByRole('heading', { name: 'UntitledTest', exact: true })).toBeVisible()
   await expect(page.getByRole('link', { name: 'UntitledTest', exact: true })).toBeVisible()
   await page.waitForTimeout(1000)
-  await page.getByText('example').click()
+  await page.getByText('example', { exact: true }).click()
   await page.getByText('This is a test.').click()
   await expect(page.locator('a.cm-hyper-link-icon').first()).toBeVisible()
   await expect(page.getByRole('img')).toBeVisible()
+  await page.getByText('example2').click()
+  page.locator('a.cm-internal-link-icon').first().click()
+  await expect(page.getByText('This is a test.')).toBeVisible()
 
   // TODO: Context menu
 })

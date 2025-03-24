@@ -8,6 +8,7 @@ interface API {
   createFile: () => Promise<string>
   deleteFile: (string) => Promise<boolean>
   getSidebarState: () => Promise<boolean>
+  fetch: (string) => Promise<void>
 }
 
 declare global {
