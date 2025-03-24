@@ -2,12 +2,17 @@
 
 main,
 a,
-button {
+button,
+input {
   -webkit-app-region: no-drag;
 }
 
 * {
   scrollbar-color: rgba(0, 0, 0, 0.3) transparent;
+}
+
+*::-webkit-scrollbar {
+  -webkit-app-region: no-drag;
 }
 
 .cm-focused {

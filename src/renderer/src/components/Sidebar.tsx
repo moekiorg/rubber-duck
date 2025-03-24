@@ -1,7 +1,8 @@
 import { NavLink } from 'react-router'
 import { File } from './Page'
 import { MaterialSymbol } from 'react-material-symbols'
-import { MouseEvent } from 'react'
+import { MouseEvent, useEffect, useRef, useState } from 'react'
+import { FixedSizeList } from 'react-window'
 
 interface Props {
   files: Array<File>
@@ -14,6 +15,39 @@ interface Props {
   isVisible: boolean
 }
 
+const FileItem = ({
+  title,
+  isActive,
+  style
+}: {
+  title: string
+  isActive: boolean
+  style: React.CSSProperties | undefined
+}): JSX.Element => {
+  const handleContextMenu = (
+    e: MouseEvent<HTMLAnchorElement, globalThis.MouseEvent>,
+    fileTitle: string
+  ): void => {
+    e.preventDefault()
+    window.electron.ipcRenderer.send('show-context-menu', fileTitle)
+  }
+
+  return (
+    <div style={style} className="px-2">
+      <NavLink
+        key={title}
+        to={`/notes/${title}`}
+        state={{ id: title }}
+        replace
+        className={`file-item w-full text-left block cursor-default rounded truncate p-2 ${isActive ? 'bg-gray-200' : ''}`}
+        onContextMenu={(e) => handleContextMenu(e, title)}
+      >
+        {title}
+      </NavLink>
+    </div>
+  )
+}
+
 export default function Sidebar({
   files,
   currentFile,
@@ -24,13 +58,33 @@ export default function Sidebar({
   query,
   isVisible
 }: Props): JSX.Element {
-  const handleContextMenu = (
-    e: MouseEvent<HTMLAnchorElement, globalThis.MouseEvent>,
-    fileTitle: string
-  ): void => {
-    e.preventDefault()
-    window.electron.ipcRenderer.send('show-context-menu', fileTitle)
-  }
+  const [listHeight, setListHeight] = useState(0)
+  const listRef = useRef<HTMLDivElement>(null)
+  const searchField = useRef<HTMLInputElement>(null)
+  const [isTransitionVisible, setIsTransitionVisible] = useState(true)
+
+  useEffect(() => {
+    setTimeout(() => setListHeight(listRef.current?.getBoundingClientRect().height || 0), 5)
+
+    window.addEventListener('resize', () => {
+      setListHeight(listRef.current!.getBoundingClientRect().height)
+    })
+
+    setTimeout(() => {
+      listRef.current?.children[0]?.addEventListener('scroll', (e) => {
+        const el = e.target as HTMLElement
+        if (
+          (el.children[0].clientHeight - (el.scrollTop + el.clientHeight)) /
+            el.children[0].clientHeight <
+          0.1
+        ) {
+          setIsTransitionVisible(false)
+        } else {
+          setIsTransitionVisible(true)
+        }
+      })
+    }, 10)
+  }, [])
 
   if (!isVisible) {
     return <></>
@@ -40,30 +94,40 @@ export default function Sidebar({
     <aside className="bg-gray-100 border-r border-[rgb(218,218,218)] max-w-[200px] w-[200px] min-w-[200px]">
       {isSearchVisible && (
         <div className="p-3 pb-0">
-          <input
-            value={query || ''}
-            type="text"
-            autoFocus
-            onChange={(e) => onChange(e.target.value)}
-            className="bg-white border border-gray-300 p-1 rounded w-full"
-          />
+          <div className="bg-white border gap-1 border-gray-300 rounded-lg p-1 flex items-center">
+            <MaterialSymbol icon="search" size={20} className="text-gray-600" />
+            <input
+              value={query || ''}
+              type="text"
+              ref={searchField}
+              placeholder="Search"
+              autoFocus
+              onChange={(e) => onChange(e.target.value)}
+              className="outline-none placeholder:text-gray-300"
+            />
+          </div>
         </div>
       )}
-      <div className="p-2 overflow-y-scroll h-[calc(100vh-80px)]">
-        {(query ? filteredFiles : files).map((file, i) => (
-          <NavLink
-            key={i}
-            to={`/notes/${file.title}`}
-            state={{ id: file.title }}
-            replace
-            className={`file-item w-full text-left block cursor-default truncate p-2 rounded ${file.title == currentFile?.title ? 'bg-gray-200' : ''}`}
-            onContextMenu={(e) => handleContextMenu(e, file.title)}
-          >
-            {file.title}
-          </NavLink>
-        ))}
+      <div
+        ref={listRef}
+        className={`h-[calc(100vh-90px)] relative pt-2 pb-[70px] ${isTransitionVisible ? 'after:block' : 'after:hidden'} after:bg-gradient-to-t after:from-gray-100 after:content-[''] after:h-[30px] after:w-full after:absolute after:-bottom-[8px] after:left-0`}
+      >
+        <FixedSizeList
+          height={listHeight}
+          itemCount={query ? filteredFiles.length + 1 : files.length + 1}
+          itemSize={32}
+        >
+          {({ style, index }) => {
+            const file = query ? filteredFiles[index] : files[index]
+            return FileItem({
+              style,
+              title: file?.title,
+              isActive: file?.title === currentFile?.title
+            })
+          }}
+        </FixedSizeList>
       </div>
-      <div className="sticky bottom-0 left-0 w-full h-[50px] p-2 text-left z-10 bg-gray-100">
+      <div className="fixed bottom-0 left-0 w-[200px] border-r border-[rgb(218,218,218)] h-[50px] p-2 text-left z-10 bg-gray-100">
         <button
           type="button"
           className="rounded p-1 hover:bg-gray-200 flex items-center transition-all"
