@@ -6,7 +6,7 @@ import { FixedSizeList } from 'react-window'
 
 interface Props {
   files: Array<File>
-  currentFile: File | null
+  currentTitle: string
   onCreate: () => void
   isSearchVisible: boolean
   onChange: (value: string) => void
@@ -39,7 +39,7 @@ const FileItem = ({
         to={`/notes/${title}`}
         state={{ id: title }}
         replace
-        className={`file-item w-full text-left block cursor-default rounded truncate p-2 ${isActive ? 'bg-gray-200' : ''}`}
+        className={`file-item h-full w-full text-left block cursor-default rounded truncate p-2 ${isActive ? 'bg-gray-200' : ''}`}
         onContextMenu={(e) => handleContextMenu(e, title)}
       >
         {title}
@@ -50,7 +50,7 @@ const FileItem = ({
 
 export default function Sidebar({
   files,
-  currentFile,
+  currentTitle,
   onCreate,
   isSearchVisible,
   onChange,
@@ -122,7 +122,7 @@ export default function Sidebar({
             return FileItem({
               style,
               title: file?.title,
-              isActive: file?.title === currentFile?.title
+              isActive: file?.title === currentTitle
             })
           }}
         </FixedSizeList>

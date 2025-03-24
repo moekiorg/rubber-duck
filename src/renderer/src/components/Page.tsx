@@ -63,6 +63,9 @@ export default function Page(): JSX.Element {
       if (result) {
         setFiles((prevFiles) => prevFiles.filter((file) => file.title !== fileTitle))
         setAllFiles((prevFiles) => prevFiles.filter((file) => file.title !== fileTitle))
+        if (fileTitle === currentTitle) {
+          setCurrentFile(null)
+        }
       }
     })
 
@@ -131,7 +134,7 @@ export default function Page(): JSX.Element {
     if (!currentFile) {
       return
     }
-    setFiles([currentFile, ...files.filter((f) => f.title !== currentTitle)])
+    setFiles([{ title: currentTitle }, ...files.filter((f) => f.title !== currentTitle)])
   }
 
   return (
@@ -142,7 +145,7 @@ export default function Page(): JSX.Element {
           files={files}
           isVisible={isSidebarVisible}
           filteredFiles={filteredFiles}
-          currentFile={currentFile || null}
+          currentTitle={currentTitle}
           onCreate={handleCreate}
           isSearchVisible={isSearchVisible}
           onChange={handleQueryChange}
