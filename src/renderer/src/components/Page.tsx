@@ -72,6 +72,12 @@ export default function Page(): JSX.Element {
     return (): void => {
       window.electron.ipcRenderer.removeAllListeners('delete-file')
     }
+  }, [currentTitle])
+
+  useEffect(() => {
+    window.electron.ipcRenderer.on('replace', async (_, title) => {
+      navigate(`/notes/${title}`, { replace: true, state: { id: title } })
+    })
   }, [])
 
   const handleQueryChange = (q): void => {

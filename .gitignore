@@ -14,3 +14,4 @@ out
 /tests/test-user-data
 /tests/notes/*
 !/tests/notes/example.md
+!/tests/notes/example2.md

@@ -1,6 +1,7 @@
 import { markdown, markdownLanguage } from '@codemirror/lang-markdown'
 import { languages } from '@codemirror/language-data'
 import { hyperLink } from '@renderer/lib/hyper-link-plugin'
+import { internalLink } from '@renderer/lib/internal-link-plugin'
 import { markdownImagePlugin } from '@renderer/lib/markdown-image-plugin'
 import CodeMirror, { EditorView, ReactCodeMirrorRef } from '@uiw/react-codemirror'
 import { KeyboardEventHandler, LegacyRef } from 'react'
@@ -25,7 +26,8 @@ export default function BodyField({
         markdown({ base: markdownLanguage, codeLanguages: languages }),
         hyperLink,
         EditorView.lineWrapping,
-        markdownImagePlugin
+        markdownImagePlugin,
+        internalLink
       ]}
       onChange={onChange}
       ref={editorRef}

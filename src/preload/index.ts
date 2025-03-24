@@ -9,7 +9,8 @@ const api = {
     ipcRenderer.invoke('writeFile', title, body, previousTitle),
   createFile: (): Promise<string> => ipcRenderer.invoke('createFile'),
   deleteFile: (title): Promise<boolean> => ipcRenderer.invoke('deleteFile', title),
-  getSidebarState: (): Promise<boolean> => ipcRenderer.invoke('getSidebarState')
+  getSidebarState: (): Promise<boolean> => ipcRenderer.invoke('getSidebarState'),
+  fetch: (title): Promise<void> => ipcRenderer.invoke('fetch', title)
 }
 
 // Use `contextBridge` APIs to expose Electron APIs to

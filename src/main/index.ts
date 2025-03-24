@@ -60,6 +60,9 @@ app.whenReady().then(() => {
   ipcMain.handle('createFile', handleFileCreate)
   ipcMain.handle('deleteFile', handleFileDelete)
   ipcMain.handle('getSidebarState', () => store.get('sidebar'))
+  ipcMain.handle('fetch', (_: Electron.IpcMainInvokeEvent, title: string) => {
+    mainWindow?.webContents.send('replace', title)
+  })
 })
 
 app.on('window-all-closed', () => {
