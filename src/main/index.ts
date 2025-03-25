@@ -79,6 +79,16 @@ app.whenReady().then(() => {
       return []
     }
   })
+  ipcMain.handle('getCss', async () => {
+    try {
+      const dirPath = store.get('path') as string
+      return readdirSync(join(dirPath, '.rubber-duck'))
+        .filter((file) => file.endsWith('.css'))
+        .map((file) => `custom-file://${join(dirPath, '.rubber-duck', file)}`)
+    } catch {
+      return []
+    }
+  })
 })
 
 app.on('window-all-closed', () => {

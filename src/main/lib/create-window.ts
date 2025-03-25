@@ -9,6 +9,7 @@ export const createWindow = (): BrowserWindow => {
     width: 900,
     height: 670,
     show: false,
+    transparent: true,
     autoHideMenuBar: true,
     titleBarStyle: 'hidden',
     ...(process.platform === 'linux' ? { icon } : {}),

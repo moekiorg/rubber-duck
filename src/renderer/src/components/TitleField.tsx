@@ -12,7 +12,7 @@ export default function TitleField({ value, editorRef, onChange, onKeyDown }: Pr
   return (
     <TextareaAutosize
       value={value}
-      className="outline-none text-lg p-2 resize-none w-full"
+      className="title-field"
       ref={editorRef}
       onChange={(e) => onChange(e.target.value)}
       onKeyDown={onKeyDown}

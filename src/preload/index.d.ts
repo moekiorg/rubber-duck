@@ -15,6 +15,7 @@ interface API {
   getSidebarState: () => Promise<boolean>
   fetch: (string) => Promise<void>
   getJs: () => Promise<Array<string>>
+  getCss: () => Promise<Array<string>>
 }
 
 declare global {

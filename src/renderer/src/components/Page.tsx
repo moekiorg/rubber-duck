@@ -192,7 +192,7 @@ export default function Page(): JSX.Element {
   return (
     <>
       <Header title={currentTitle || ''} />
-      <div className="text-xs pt-0 flex grow">
+      <main>
         <Sidebar
           files={files}
           isVisible={isSidebarVisible}
@@ -204,7 +204,7 @@ export default function Page(): JSX.Element {
           currentId={currentId}
           query={query}
         />
-        <main className="w-full h-[calc(100vh-30px)] overflow-y-scroll">
+        <article>
           {currentFile ? (
             <Editor
               isSidebarVisible={isSidebarVisible}
@@ -217,10 +217,10 @@ export default function Page(): JSX.Element {
               titleEditor={titleEditor}
             />
           ) : (
-            <div className={`w-full h-full grow bg-gray-50`}></div>
+            <div className="empty-page"></div>
           )}
-        </main>
-      </div>
+        </article>
+      </main>
     </>
   )
 }

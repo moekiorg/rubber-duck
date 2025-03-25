@@ -12,25 +12,21 @@ export default function Setup(): JSX.Element {
   return (
     <>
       <Header title="" />
-      <div className="p-20 flex text-xs items-center justify-center h-[calc(100vh-30px)]">
-        <div className="flex gap-2 items-center text-gray-500 ">
+      <div className="setup-container">
+        <div className="setup">
           <button
             type="button"
             onClick={async () => {
               await window.api.openFile()
               navigate('/')
             }}
-            className="hover:bg-gray-50 rounded py-1 px-2"
+            className="open-file-button"
           >
             Open
           </button>
-          <div className="flex gap-1 items-center">
-            <div className="border border-gray-300 bg-gray-50 w-6 flex items-center h-6 shadow rounded p-2 justify-center">
-              ⌘
-            </div>
-            <div className="border border-gray-300 bg-gray-50 w-6 flex items-center h-6 shadow rounded p-2 justify-center">
-              O
-            </div>
+          <div className="open-file-shortcut">
+            <div className="keyboard">⌘</div>
+            <div className="keyboard">O</div>
           </div>
         </div>
       </div>
