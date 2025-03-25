@@ -32,7 +32,7 @@ const FileItem = ({
     id: string
   ): void => {
     e.preventDefault()
-    window.electron.ipcRenderer.send('show-context-menu', id)
+    window.electron.ipcRenderer.send('show-context-menu', id, title)
   }
 
   return (

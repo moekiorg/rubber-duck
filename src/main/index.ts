@@ -1,4 +1,4 @@
-import { app, BrowserWindow, ipcMain, Menu, protocol } from 'electron'
+import { app, BrowserWindow, ipcMain, Menu, protocol, shell } from 'electron'
 import { electronApp, optimizer } from '@electron-toolkit/utils'
 import { createWindow } from './lib/create-window'
 import { handleDirOpen } from './listeners/handle-dir-open'
@@ -35,8 +35,18 @@ app.whenReady().then(() => {
     store.set('sidebar', true)
   }
 
-  ipcMain.on('show-context-menu', (event, id) => {
+  ipcMain.on('show-context-menu', (event, id, title) => {
     const menu = Menu.buildFromTemplate([
+      {
+        label: 'Reveal in Finder',
+        click: (): void => {
+          const dirPath = store.get('path') as string
+          shell.showItemInFolder(join(dirPath, `${title}.md`))
+        }
+      },
+      {
+        type: 'separator'
+      },
       {
         label: 'Delete',
         click: (): void => {
