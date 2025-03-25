@@ -38,6 +38,13 @@ app.whenReady().then(() => {
   ipcMain.on('show-context-menu', (event, id, title) => {
     const menu = Menu.buildFromTemplate([
       {
+        label: 'Open in default app',
+        click: (): void => {
+          const dirPath = store.get('path') as string
+          shell.openPath(join(dirPath, `${title}.md`))
+        }
+      },
+      {
         label: 'Reveal in Finder',
         click: (): void => {
           const dirPath = store.get('path') as string
