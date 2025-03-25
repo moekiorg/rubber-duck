@@ -21,7 +21,7 @@ test.beforeEach(async () => {
   if (existsSync(testNotesPath)) {
     const entries = readdirSync(testNotesPath)
     for (const entry of entries) {
-      if (!['example2.md', 'example.md'].includes(entry)) {
+      if (!['example2.md', 'example.md', '.rubber-duck'].includes(entry)) {
         rmSync(join(testNotesPath, entry), { recursive: true })
       }
     }
@@ -43,10 +43,10 @@ test('Scenario', async () => {
   await page.getByRole('button', { name: 'Add' }).click()
   await expect(page.getByRole('heading', { name: 'Untitled', exact: true })).toBeVisible()
   await expect(page.getByRole('link', { name: 'Untitled', exact: true })).toBeVisible()
-  await page.getByRole('textbox', { name: 'Title' }).focus()
-  await page.keyboard.insertText('Test')
-  await expect(page.getByRole('heading', { name: 'TestUntitled', exact: true })).toBeVisible()
-  await expect(page.getByRole('link', { name: 'TestUntitled', exact: true })).toBeVisible()
+  await page.waitForTimeout(1000)
+  await page.keyboard.insertText('New Title')
+  await expect(page.getByRole('heading', { name: 'New Title', exact: true })).toBeVisible()
+  await expect(page.getByRole('link', { name: 'New Title', exact: true })).toBeVisible()
   await page.waitForTimeout(1000)
   await page.getByText('example', { exact: true }).click()
   await page.getByText('This is a test.').click()
@@ -55,6 +55,7 @@ test('Scenario', async () => {
   await page.getByText('example2').click()
   page.locator('a.cm-internal-link-icon').first().click()
   await expect(page.getByText('This is a test.')).toBeVisible()
+  await expect(page.getByText('inserted')).toBeVisible()
 
   // TODO: Context menu
 })
