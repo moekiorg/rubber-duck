@@ -1,5 +1,4 @@
-import { minify } from 'minify'
-import { app, BrowserWindow, ipcMain, Menu } from 'electron'
+import { app, BrowserWindow, ipcMain, Menu, protocol } from 'electron'
 import { electronApp, optimizer } from '@electron-toolkit/utils'
 import { createWindow } from './lib/create-window'
 import { handleDirOpen } from './listeners/handle-dir-open'
@@ -9,13 +8,18 @@ import { handleFileWrite } from './listeners/handle-file-write'
 import { handleFileCreate } from './listeners/handle-file-create'
 import { handleFileDelete } from './listeners/handle-file-delete'
 import { store } from './lib/store'
-import { FSWatcher, watch } from 'fs'
-import { join } from 'path'
+import { FSWatcher, readdirSync, watch } from 'fs'
+import { join, normalize } from 'path'
 
 let watcher: FSWatcher | null = null
 let mainWindow: BrowserWindow
 
 app.whenReady().then(() => {
+  protocol.registerFileProtocol('custom-file', (request, callback) => {
+    const url = request.url.replace('custom-file://', '')
+    callback({ path: normalize(url) })
+  })
+
   electronApp.setAppUserModelId('com.electron')
 
   mainWindow = createWindow()
@@ -68,9 +72,11 @@ app.whenReady().then(() => {
   ipcMain.handle('getJs', async () => {
     try {
       const dirPath = store.get('path') as string
-      return minify(join(dirPath, '.rubber-duck', 'index.js'))
+      return readdirSync(join(dirPath, '.rubber-duck'))
+        .filter((file) => file.endsWith('.js'))
+        .map((file) => `custom-file://${join(dirPath, '.rubber-duck', file)}`)
     } catch {
-      return ''
+      return []
     }
   })
 })

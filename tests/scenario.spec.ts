@@ -54,6 +54,7 @@ test('Scenario', async () => {
   await expect(page.locator('a.cm-hyper-link-icon').first()).toBeVisible()
   await expect(page.getByRole('img')).toBeVisible()
   await page.getByText('example2').click()
+  await page.waitForTimeout(1000)
   page.locator('a.cm-internal-link-icon').first().click()
   await expect(page.getByText('This is a test.')).toBeVisible()
   await expect(page.getByText('inserted')).toBeVisible()

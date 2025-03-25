@@ -5,18 +5,21 @@
     <title>RubberDuck</title>
     <meta
       http-equiv="Content-Security-Policy"
-      content="default-src 'self'; script-src 'unsafe-inline' 'self'; style-src 'self' 'unsafe-inline'; img-src * 'self' data:"
+      content="default-src 'self' custom-file:; script-src 'unsafe-inline' 'unsafe-eval' 'self' custom-file:; style-src 'self' 'unsafe-inline'; img-src * 'self' data:"
     />
     <script type="module">
       window.rubberDuck = {}
 
-      const content = await window.api.getJs()
-      if (content) {
-        const script = document.createElement('script')
-        script.id = 'custom-js'
-        script.type = 'text/javascript'
-        script.innerText = content
-        document.querySelector('body')?.appendChild(script)
+      const scripts = await window.api.getJs()
+      for (const src of scripts) {
+        try {
+          await import(
+            /* @vite-ignore */
+            src
+          )
+        } catch (e) {
+          console.error(`Failed to import ${src}:`, e)
+        }
       }
     </script>
   </head>
