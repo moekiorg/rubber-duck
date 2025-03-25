@@ -21,6 +21,10 @@ export const handleFileWrite = async (
   const newFilePath = join(dirPath, `${filename}.md`)
   const oldFilePath = join(dirPath, files.find((f) => f.id === id)!.filename!)
 
+  if (files.find((f) => f.id !== id && f.filename === filename)) {
+    return false
+  }
+
   await promises.rename(oldFilePath, newFilePath)
   await promises.writeFile(newFilePath, body, 'utf-8')
 
