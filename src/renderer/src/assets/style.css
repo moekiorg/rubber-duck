@@ -132,3 +132,7 @@ aside {
 .add-button {
   @apply rounded p-1 hover:bg-gray-200 flex items-center transition-all;
 }
+
+.file-item {
+  @apply h-full w-full text-left block cursor-default rounded truncate p-2;
+}

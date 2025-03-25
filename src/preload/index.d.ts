@@ -3,6 +3,7 @@ import { File } from '@renderer/components/Page'
 
 interface RubberDuck {
   editorStyles: Array<TagStyle>
+  files: Array<File>
 }
 
 interface API {
