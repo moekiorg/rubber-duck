@@ -1,6 +1,10 @@
 import { ElectronAPI } from '@electron-toolkit/preload'
 import { File } from '@renderer/components/Page'
 
+interface RubberDuck {
+  editorStyles: Array<TagStyle>
+}
+
 interface API {
   openFile: () => Promise<void>
   getFiles: () => Promise<Array<File>>
@@ -17,5 +21,6 @@ declare global {
   interface Window {
     electron: ElectronAPI
     api: API
+    rubberDuck: RubberDuck
   }
 }
