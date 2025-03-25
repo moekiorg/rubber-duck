@@ -1,7 +1,9 @@
+import { autocompletion } from '@codemirror/autocomplete'
 import { markdown, markdownLanguage } from '@codemirror/lang-markdown'
 import { languages } from '@codemirror/language-data'
 import { highlights } from '@renderer/lib/highlights'
 import { hyperLink } from '@renderer/lib/hyper-link-plugin'
+import { internalLinkCompletion } from '@renderer/lib/internal-link-completion'
 import { internalLink } from '@renderer/lib/internal-link-plugin'
 import { markdownImagePlugin } from '@renderer/lib/markdown-image-plugin'
 import CodeMirror, { EditorView, ReactCodeMirrorRef } from '@uiw/react-codemirror'
@@ -29,7 +31,10 @@ export default function BodyField({
         EditorView.lineWrapping,
         markdownImagePlugin,
         internalLink,
-        ...highlights
+        ...highlights,
+        autocompletion({
+          override: [internalLinkCompletion]
+        })
       ]}
       onChange={onChange}
       ref={editorRef}

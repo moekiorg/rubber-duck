@@ -1,7 +1,7 @@
 import { ReactCodeMirrorRef } from '@uiw/react-codemirror'
 import BodyField from './BodyField'
 import TitleField from './TitleField'
-import { KeyboardEventHandler, RefObject, useEffect, useRef, useState } from 'react'
+import { RefObject, useEffect, useRef, useState } from 'react'
 import { File } from './Page'
 import { useDebouncedCallback } from 'use-debounce'
 
@@ -47,6 +47,9 @@ export default function Editor({
   }
 
   const handleTitleKeyDown = (e): void => {
+    if (e.isComposing) {
+      return
+    }
     if (e.keyCode === 13) {
       e.preventDefault()
       editor.current?.view?.focus()
@@ -74,7 +77,10 @@ export default function Editor({
     onTitleChange(value)
   }
 
-  const handleBodyKeyDownCapture: KeyboardEventHandler<HTMLDivElement> = (e) => {
+  const handleBodyKeyDownCapture = (e: KeyboardEvent): void => {
+    if (e.isComposing) {
+      return
+    }
     if (e.key === 'ArrowUp') {
       const view = editor.current?.view
       if (!view) return
@@ -118,7 +124,7 @@ export default function Editor({
           value={currentBody}
           editorRef={editor}
           onChange={handleUpdate}
-          onKeyDownCapture={handleBodyKeyDownCapture}
+          onKeyDownCapture={handleBodyKeyDownCapture as (keyboardEvent) => void}
         />
       )}
     </div>

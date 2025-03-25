@@ -92,6 +92,7 @@ export default function Page(): JSX.Element {
       .then(async (fs) => {
         setFiles(fs)
         setAllFiles(fs)
+        window.rubberDuck.files = fs
       })
       .catch(() => {
         navigate('/setup', { replace: true })
