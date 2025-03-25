@@ -1,5 +1,6 @@
 import { markdown, markdownLanguage } from '@codemirror/lang-markdown'
 import { languages } from '@codemirror/language-data'
+import { highlights } from '@renderer/lib/highlights'
 import { hyperLink } from '@renderer/lib/hyper-link-plugin'
 import { internalLink } from '@renderer/lib/internal-link-plugin'
 import { markdownImagePlugin } from '@renderer/lib/markdown-image-plugin'
@@ -27,7 +28,8 @@ export default function BodyField({
         hyperLink,
         EditorView.lineWrapping,
         markdownImagePlugin,
-        internalLink
+        internalLink,
+        ...highlights
       ]}
       onChange={onChange}
       ref={editorRef}
