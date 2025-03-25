@@ -10,6 +10,7 @@ interface API {
   deleteFile: (string) => Promise<boolean>
   getSidebarState: () => Promise<boolean>
   fetch: (string) => Promise<void>
+  getJs: () => Promise<string>
 }
 
 declare global {

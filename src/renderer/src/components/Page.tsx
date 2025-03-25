@@ -28,6 +28,22 @@ export default function Page(): JSX.Element {
   const titleEditor = useRef<HTMLTextAreaElement>(null)
 
   useEffect(() => {
+    window.api.getJs().then((content) => {
+      if (document.querySelector('#custom-js')) {
+        return
+      }
+      if (!content) {
+        return
+      }
+      const script = document.createElement('script')
+      script.id = 'custom-js'
+      script.type = 'text/javascript'
+      script.innerText = content
+      document.querySelector('body')?.appendChild(script)
+    })
+  }, [])
+
+  useEffect(() => {
     window.api.getSidebarState().then((value) => {
       setIsSidebarVisible(value)
     })

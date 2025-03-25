@@ -1,3 +1,4 @@
+import { minify } from 'minify'
 import { app, BrowserWindow, ipcMain, Menu } from 'electron'
 import { electronApp, optimizer } from '@electron-toolkit/utils'
 import { createWindow } from './lib/create-window'
@@ -9,6 +10,7 @@ import { handleFileCreate } from './listeners/handle-file-create'
 import { handleFileDelete } from './listeners/handle-file-delete'
 import { store } from './lib/store'
 import { FSWatcher, watch } from 'fs'
+import { join } from 'path'
 
 let watcher: FSWatcher | null = null
 let mainWindow: BrowserWindow
@@ -62,6 +64,14 @@ app.whenReady().then(() => {
   ipcMain.handle('getSidebarState', () => store.get('sidebar'))
   ipcMain.handle('fetch', (_: Electron.IpcMainInvokeEvent, title: string) => {
     mainWindow?.webContents.send('replace', title)
+  })
+  ipcMain.handle('getJs', async () => {
+    try {
+      const dirPath = store.get('path') as string
+      return minify(join(dirPath, '.rubber-duck', 'index.js'))
+    } catch {
+      return ''
+    }
   })
 })
 
