@@ -136,3 +136,7 @@ aside {
 .file-item {
   @apply h-full w-full text-left block cursor-default rounded truncate p-2;
 }
+
+.cm-completionIcon {
+  display: none !important;
+}
