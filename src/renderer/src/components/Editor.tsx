@@ -78,7 +78,13 @@ export default function Editor({
   }
 
   const handleBodyKeyDownCapture = (e: KeyboardEvent): void => {
+    if (e.key === 'Escape' || e.key === 'Enter') {
+      window.rubberDuck.isCompleting = false
+    }
     if (e.isComposing) {
+      return
+    }
+    if (window.rubberDuck.isCompleting) {
       return
     }
     if (e.key === 'ArrowUp') {
