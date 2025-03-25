@@ -1,7 +1,7 @@
 import { ReactCodeMirrorRef } from '@uiw/react-codemirror'
 import BodyField from './BodyField'
 import TitleField from './TitleField'
-import { KeyboardEventHandler, useEffect, useRef, useState } from 'react'
+import { KeyboardEventHandler, RefObject, useEffect, useRef, useState } from 'react'
 import { File } from './Page'
 import { useDebouncedCallback } from 'use-debounce'
 
@@ -13,6 +13,7 @@ interface Props {
   currentTitle: string
   isSidebarVisible: boolean
   onBodyChange: (value: string) => void
+  titleEditor: RefObject<HTMLTextAreaElement>
 }
 
 export default function Editor({
@@ -22,12 +23,12 @@ export default function Editor({
   setCurrentTitle,
   currentTitle,
   isSidebarVisible,
-  onBodyChange
+  onBodyChange,
+  titleEditor
 }: Props): JSX.Element {
   const [editorVisible, setEditorVisible] = useState(true)
   const [currentBody, setCurrentBody] = useState('')
   const editor = useRef<ReactCodeMirrorRef>(null)
-  const titleEditor = useRef<HTMLTextAreaElement>(null)
 
   const writeFile = useDebouncedCallback(async (t, b, target) => {
     const result = window.api.writeFile(t, b, target)

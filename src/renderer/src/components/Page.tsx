@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import 'react-material-symbols/rounded'
 import { useLocation, useNavigate } from 'react-router'
 import Sidebar from './Sidebar'
@@ -25,6 +25,7 @@ export default function Page(): JSX.Element {
   const [isSearchVisible, setIsSearchVisible] = useState(false)
   const [isSidebarVisible, setIsSidebarVisible] = useState(false)
   const [isDeleted, setIsDeleted] = useState(false)
+  const titleEditor = useRef<HTMLTextAreaElement>(null)
 
   useEffect(() => {
     window.api.getSidebarState().then((value) => {
@@ -59,6 +60,7 @@ export default function Page(): JSX.Element {
         replace: true,
         state: { title: result.title }
       })
+      setTimeout(() => titleEditor.current?.select(), 50)
     },
     [files, navigate]
   )
@@ -212,6 +214,7 @@ export default function Page(): JSX.Element {
               files={allFiles}
               onTitleChange={handleTitleChange}
               onBodyChange={handleBodyChange}
+              titleEditor={titleEditor}
             />
           ) : (
             <div className={`w-full h-full grow bg-gray-50`}></div>
