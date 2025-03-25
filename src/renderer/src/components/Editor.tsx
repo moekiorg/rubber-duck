@@ -106,7 +106,7 @@ export default function Editor({
   }, [currentFile.title, setCurrentTitle])
 
   return (
-    <div className={`p-5 ${isSidebarVisible ? 'max-w-[calc(100vw-200px)]' : 'max-w-full'}`}>
+    <div className={`editor ${isSidebarVisible ? 'max-w-[calc(100vw-200px)]' : 'max-w-full'}`}>
       <TitleField
         value={currentTitle || ''}
         onChange={handleTitleChange}

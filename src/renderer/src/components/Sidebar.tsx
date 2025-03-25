@@ -64,7 +64,6 @@ export default function Sidebar({
   const [listHeight, setListHeight] = useState(0)
   const listRef = useRef<HTMLDivElement>(null)
   const searchField = useRef<HTMLInputElement>(null)
-  const [isTransitionVisible, setIsTransitionVisible] = useState(true)
 
   useEffect(() => {
     setTimeout(() => setListHeight(listRef.current?.getBoundingClientRect().height || 0), 5)
@@ -72,21 +71,6 @@ export default function Sidebar({
     window.addEventListener('resize', () => {
       setListHeight(listRef.current!.getBoundingClientRect().height)
     })
-
-    setTimeout(() => {
-      listRef.current?.children[0]?.addEventListener('scroll', (e) => {
-        const el = e.target as HTMLElement
-        if (
-          (el.children[0].clientHeight - (el.scrollTop + el.clientHeight)) /
-            el.children[0].clientHeight <
-          0.1
-        ) {
-          setIsTransitionVisible(false)
-        } else {
-          setIsTransitionVisible(true)
-        }
-      })
-    }, 10)
   }, [])
 
   if (!isVisible) {
@@ -94,11 +78,11 @@ export default function Sidebar({
   }
 
   return (
-    <aside className="bg-gray-100 border-r border-[rgb(218,218,218)] max-w-[200px] w-[200px] min-w-[200px]">
+    <aside>
       {isSearchVisible && (
-        <div className="p-3 pb-0">
-          <div className="bg-white border gap-1 border-gray-300 rounded-lg p-1 flex items-center">
-            <MaterialSymbol icon="search" size={20} className="text-gray-600" />
+        <div className="search-bar-container">
+          <div className="search-bar">
+            <MaterialSymbol icon="search" size={20} className="search-icon" />
             <input
               value={query || ''}
               type="text"
@@ -106,15 +90,12 @@ export default function Sidebar({
               placeholder="Search"
               autoFocus
               onChange={(e) => onChange(e.target.value)}
-              className="outline-none placeholder:text-gray-300"
+              className="search-field"
             />
           </div>
         </div>
       )}
-      <div
-        ref={listRef}
-        className={`h-[calc(100vh-90px)] relative pt-2 pb-[70px] ${isTransitionVisible ? 'after:block' : 'after:hidden'} after:bg-gradient-to-t after:from-gray-100 after:content-[''] after:h-[30px] after:w-full after:absolute after:-bottom-[8px] after:left-0`}
-      >
+      <div ref={listRef} className="file-list">
         <FixedSizeList
           height={listHeight}
           itemCount={query ? filteredFiles.length : files.length}
@@ -131,13 +112,8 @@ export default function Sidebar({
           }}
         </FixedSizeList>
       </div>
-      <div className="fixed bottom-0 left-0 w-[200px] border-r border-[rgb(218,218,218)] h-[50px] p-2 text-left z-10 bg-gray-100">
-        <button
-          type="button"
-          className="rounded p-1 hover:bg-gray-200 flex items-center transition-all"
-          onClick={onCreate}
-          title="Add"
-        >
+      <div className="sidebar-footer">
+        <button type="button" className="add-button" onClick={onCreate} title="Add">
           <MaterialSymbol icon="add" size={20} />
         </button>
       </div>
