@@ -1,9 +1,9 @@
-import { ReactCodeMirrorRef } from '@uiw/react-codemirror'
 import BodyField from './BodyField'
 import TitleField from './TitleField'
-import { RefObject, useEffect, useRef, useState } from 'react'
+import { RefObject, useContext, useEffect, useState } from 'react'
 import { File } from './Page'
 import { useDebouncedCallback } from 'use-debounce'
+import { EditorContext } from '@renderer/contexts/editorContext'
 
 interface Props {
   currentFile: File
@@ -28,7 +28,7 @@ export default function Editor({
 }: Props): JSX.Element {
   const [editorVisible, setEditorVisible] = useState(true)
   const [currentBody, setCurrentBody] = useState('')
-  const editor = useRef<ReactCodeMirrorRef>(null)
+  const editor = useContext(EditorContext)
 
   const writeFile = useDebouncedCallback(async (t, b, target) => {
     const result = window.api.writeFile(t, b, target)
@@ -52,12 +52,12 @@ export default function Editor({
     }
     if (e.keyCode === 13) {
       e.preventDefault()
-      editor.current?.view?.focus()
+      editor?.current?.view?.focus()
       setCurrentBody(`\n${currentBody}`)
     }
     if (e.key === 'ArrowDown') {
       e.preventDefault()
-      editor.current?.view?.focus()
+      editor?.current?.view?.focus()
     }
   }
 
@@ -88,7 +88,7 @@ export default function Editor({
       return
     }
     if (e.key === 'ArrowUp') {
-      const view = editor.current?.view
+      const view = editor?.current?.view
       if (!view) return
 
       const line = view.state.doc.lineAt(view.state.selection.main.head)
@@ -128,7 +128,6 @@ export default function Editor({
       {editorVisible && (
         <BodyField
           value={currentBody}
-          editorRef={editor}
           onChange={handleUpdate}
           onKeyDownCapture={handleBodyKeyDownCapture as (keyboardEvent) => void}
         />
