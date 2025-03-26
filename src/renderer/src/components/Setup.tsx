@@ -1,6 +1,7 @@
 import { useEffect } from 'react'
 import Header from './Header'
 import { useNavigate } from 'react-router'
+import { FormattedMessage } from 'react-intl'
 
 export default function Setup(): JSX.Element {
   const navigate = useNavigate()
@@ -22,7 +23,7 @@ export default function Setup(): JSX.Element {
             }}
             className="open-file-button"
           >
-            Open
+            <FormattedMessage id="openFolder" />
           </button>
           <div className="open-file-shortcut">
             <div className="keyboard">⌘</div>

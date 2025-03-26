@@ -1,92 +1,111 @@
-import { app, Menu } from 'electron'
+import { Menu, shell } from 'electron'
 import { handleDirOpen } from './listeners/handle-dir-open'
 import { handleSearch } from './listeners/handle-search'
 import { mainWindow } from '.'
 import { store } from './lib/store'
+import { createIntl, createIntlCache } from '@formatjs/intl'
+import { ja } from './lib/ja'
+
+const cache = createIntlCache()
+const intl = createIntl(
+  {
+    locale: 'ja',
+    messages: ja
+  },
+  cache
+)
 
 const template = [
   {
-    label: app.name,
+    label: intl.formatMessage({ id: 'app' }),
     submenu: [
-      { role: 'about' },
+      { role: 'about', label: intl.formatMessage({ id: 'about' }) },
       { type: 'separator' },
-      { role: 'services' },
+      { role: 'services', label: intl.formatMessage({ id: 'services' }) },
       { type: 'separator' },
-      { role: 'hide' },
-      { role: 'hideOthers' },
+      { role: 'hide', label: intl.formatMessage({ id: 'hide' }) },
+      { role: 'hideOthers', label: intl.formatMessage({ id: 'hideOthers' }) },
       { role: 'unhide' },
       { type: 'separator' },
-      { role: 'quit' }
+      { role: 'quit', label: intl.formatMessage({ id: 'quit' }) }
     ]
   },
   {
-    label: 'File',
+    label: intl.formatMessage({ id: 'file' }),
     submenu: [
-      { click: handleDirOpen, label: 'Open Folder...', accelerator: 'Cmd+O' },
+      { click: handleDirOpen, label: intl.formatMessage({ id: 'openDir' }), accelerator: 'Cmd+O' },
       {
         click: (): void => {
           mainWindow?.webContents.send('new')
         },
-        label: 'New File',
+        label: intl.formatMessage({ id: 'new' }),
         accelerator: 'Cmd+N'
       },
-      { click: handleSearch, label: 'Search', accelerator: 'Cmd+P' },
       { type: 'separator' },
-      { role: 'close' }
+      { click: handleSearch, label: intl.formatMessage({ id: 'search' }), accelerator: 'Cmd+P' },
+      { type: 'separator' },
+      { role: 'close', label: intl.formatMessage({ id: 'close' }) }
     ]
   },
   {
-    label: 'Edit',
+    label: intl.formatMessage({ id: 'edit' }),
     submenu: [
-      { role: 'undo' },
-      { role: 'redo' },
-      { type: 'separator' },
-      { role: 'cut' },
-      { role: 'copy' },
-      { role: 'paste' },
-      { role: 'pasteAndMatchStyle' },
-      { role: 'delete' },
-      { role: 'selectAll' },
+      { role: 'cut', label: intl.formatMessage({ id: 'cut' }) },
+      { role: 'copy', label: intl.formatMessage({ id: 'copy' }) },
+      { role: 'paste', label: intl.formatMessage({ id: 'paste' }) },
+      { role: 'pasteAndMatchStyle', label: intl.formatMessage({ id: 'pasteAndMatchStyle' }) },
+      { role: 'delete', label: intl.formatMessage({ id: 'delete' }) },
+      { role: 'selectAll', label: intl.formatMessage({ id: 'selectAll' }) },
       { type: 'separator' },
       {
-        label: 'Speech',
-        submenu: [{ role: 'startSpeaking' }, { role: 'stopSpeaking' }]
+        label: intl.formatMessage({ id: 'speak' }),
+        submenu: [
+          { role: 'startSpeaking', label: intl.formatMessage({ id: 'startSpeaking' }) },
+          { role: 'stopSpeaking', label: intl.formatMessage({ id: 'stopSpeaking' }) }
+        ]
       }
     ]
   },
   {
-    label: 'View',
+    label: intl.formatMessage({ id: 'view' }),
     submenu: [
       {
         click: (): void => {
           store.set('sidebar', !store.get('sidebar'))
           mainWindow?.webContents.send('toggle-sidebar', store.get('sidebar'))
         },
-        label: 'Sidebar',
+        label: intl.formatMessage({ id: 'sidebar' }),
         accelerator: 'Cmd+B',
         checked: await store.get('sidebar')
       },
       { type: 'separator' },
-      { role: 'reload' },
-      { role: 'forceReload' },
-      { role: 'toggleDevTools' },
+      { role: 'zoomIn', label: intl.formatMessage({ id: 'zoomIn' }) },
+      { role: 'zoomOut', label: intl.formatMessage({ id: 'zoomOut' }) },
+      { role: 'resetZoom', label: intl.formatMessage({ id: 'resetZoom' }) },
       { type: 'separator' },
-      { role: 'resetZoom' },
-      { role: 'zoomIn' },
-      { role: 'zoomOut' },
+      { role: 'toggleDevTools', label: intl.formatMessage({ id: 'toggleDevTools' }) },
       { type: 'separator' },
-      { role: 'togglefullscreen' }
+      { role: 'togglefullscreen', label: intl.formatMessage({ id: 'togglefullscreen' }) }
     ]
   },
   {
-    label: 'Window',
+    label: intl.formatMessage({ id: 'window' }),
     submenu: [
-      { role: 'minimize' },
-      { role: 'zoom' },
+      { role: 'minimize', label: intl.formatMessage({ id: 'minimize' }) },
+      { role: 'zoom', label: intl.formatMessage({ id: 'zoom' }) },
       { type: 'separator' },
-      { role: 'front' },
-      { type: 'separator' },
-      { role: 'window' }
+      { role: 'front', label: intl.formatMessage({ id: 'front' }) }
+    ]
+  },
+  {
+    label: intl.formatMessage({ id: 'help' }),
+    submenu: [
+      {
+        label: intl.formatMessage({ id: 'github' }),
+        click: (): void => {
+          shell.openExternal('https://github.com/moekiorg/rubber-duck')
+        }
+      }
     ]
   }
 ] as Array<Electron.MenuItemConstructorOptions | Electron.MenuItem>

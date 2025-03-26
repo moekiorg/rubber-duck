@@ -85,8 +85,8 @@ header {
   @apply w-full h-[calc(100vh-100px)];
 }
 
-.setup-conatiner {
-  @apply p-20 flex text-[10pt] items-center justify-center h-[calc(100vh-30px)];
+.setup-container {
+  @apply bg-white p-20 flex text-[10pt] items-center justify-center h-[calc(100vh-30px)];
 }
 
 .setup {
