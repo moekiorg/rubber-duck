@@ -32,5 +32,7 @@ export const ja = {
   zoom: '拡大/縮小',
   front: 'すべてを手前に移動',
   help: 'ヘルプ',
-  github: 'GitHub'
+  github: 'GitHub',
+  openInDefaultApp: 'アプリで開く',
+  revealInFinder: 'Finderに表示'
 }

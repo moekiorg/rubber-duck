@@ -10,6 +10,7 @@ import { handleFileDelete } from './listeners/handle-file-delete'
 import { store } from './lib/store'
 import { FSWatcher, readdirSync, watch } from 'fs'
 import { join, normalize } from 'path'
+import { intl } from './lib/intl'
 
 let watcher: FSWatcher | null = null
 let mainWindow: BrowserWindow
@@ -39,14 +40,14 @@ app.whenReady().then(() => {
   ipcMain.on('show-context-menu', (event, id, title) => {
     const menu = Menu.buildFromTemplate([
       {
-        label: 'Open in default app',
+        label: intl.formatMessage({ id: 'openInDefaultApp' }),
         click: (): void => {
           const dirPath = store.get('path') as string
           shell.openPath(join(dirPath, `${title}.md`))
         }
       },
       {
-        label: 'Reveal in Finder',
+        label: intl.formatMessage({ id: 'revealInFinder' }),
         click: (): void => {
           const dirPath = store.get('path') as string
           shell.showItemInFolder(join(dirPath, `${title}.md`))
@@ -56,7 +57,7 @@ app.whenReady().then(() => {
         type: 'separator'
       },
       {
-        label: 'Delete',
+        label: intl.formatMessage({ id: 'delete' }),
         click: (): void => {
           event.sender.send('delete-file', id)
         }
