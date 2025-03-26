@@ -82,7 +82,7 @@ header {
 }
 
 .editor-bottom {
-  @apply w-full h-screen;
+  @apply w-full h-[calc(100vh-100px)];
 }
 
 .setup-conatiner {
