@@ -1,8 +1,9 @@
 import { NavLink } from 'react-router'
 import { File } from './Page'
 import { MaterialSymbol } from 'react-material-symbols'
-import { MouseEvent, useEffect, useRef, useState } from 'react'
+import { MouseEvent, useContext, useEffect, useRef, useState } from 'react'
 import { FixedSizeList } from 'react-window'
+import { EditorContext } from '@renderer/contexts/editorContext'
 
 interface Props {
   files: Array<File>
@@ -19,13 +20,21 @@ interface Props {
 const FileItem = ({
   title,
   isActive,
+  isSelected,
   style,
-  id
+  id,
+  nextId,
+  previousId,
+  onClick
 }: {
   title: string
   isActive: boolean
   style: React.CSSProperties | undefined
+  isSelected: boolean
   id: string
+  nextId: string | null
+  previousId: string | null
+  onClick: () => void
 }): JSX.Element => {
   const handleContextMenu = (
     e: MouseEvent<HTMLAnchorElement, globalThis.MouseEvent>,
@@ -43,8 +52,12 @@ const FileItem = ({
         state={{ title }}
         replace
         id={title}
-        className={`file-item ${isActive ? 'bg-gray-200' : ''}`}
+        data-id={id}
+        data-next={nextId}
+        data-previous={previousId}
+        className={`file-item ${isActive || isSelected ? 'bg-gray-200' : ''}`}
         onContextMenu={(e) => handleContextMenu(e, id)}
+        onClick={onClick}
       >
         {title}
       </NavLink>
@@ -65,14 +78,65 @@ export default function Sidebar({
   const [listHeight, setListHeight] = useState(0)
   const listRef = useRef<HTMLDivElement>(null)
   const searchField = useRef<HTMLInputElement>(null)
+  const [selectedFileId, setSelectedFileId] = useState<string | null>(null)
+  const [isFocused, setIsFocused] = useState(false)
+  const editorRef = useContext(EditorContext)
 
   useEffect(() => {
     setTimeout(() => setListHeight(listRef.current?.getBoundingClientRect().height || 0), 5)
 
-    window.addEventListener('resize', () => {
+    const handleResize = (): void => {
       setListHeight(listRef.current!.getBoundingClientRect().height)
-    })
-  }, [])
+    }
+
+    window.addEventListener('resize', handleResize)
+
+    const updateFocus = (e): void => {
+      if (e.target.dataset.id) {
+        return
+      }
+      setIsFocused(false)
+    }
+
+    const updateSelection = (e): void => {
+      if (e.metaKey && e.key === '0') {
+        setIsFocused(true)
+        if (!selectedFileId) {
+          setSelectedFileId(currentId)
+        }
+      }
+      if (!isFocused) {
+        return
+      }
+      if (e.key === 'ArrowDown') {
+        setSelectedFileId(
+          document.querySelector<HTMLElement>(`[data-id="${selectedFileId}"]`)?.dataset.next || null
+        )
+      }
+      if (e.key === 'ArrowUp') {
+        setSelectedFileId(
+          document.querySelector<HTMLElement>(`[data-id="${selectedFileId}"]`)?.dataset.previous ||
+            null
+        )
+      }
+      if (e.metaKey && e.key === '1') {
+        setIsFocused(false)
+      }
+      if (e.key === ' ') {
+        document.querySelector<HTMLElement>(`[data-id="${selectedFileId}"]`)?.click()
+        setTimeout(() => editorRef?.current?.view?.focus(), 500)
+      }
+    }
+
+    window.addEventListener('click', updateFocus)
+    window.addEventListener('keydown', updateSelection)
+
+    return (): void => {
+      window.removeEventListener('click', updateFocus)
+      window.removeEventListener('keydown', updateSelection)
+      window.removeEventListener('resize', handleResize)
+    }
+  }, [isFocused, selectedFileId])
 
   if (!isVisible) {
     return <></>
@@ -108,7 +172,14 @@ export default function Sidebar({
               style,
               title: file?.title,
               isActive: file.id === currentId,
-              id: file.id
+              isSelected: file.id === selectedFileId,
+              id: file.id,
+              previousId: (query ? filteredFiles[index - 1]?.id : files[index - 1]?.id) || null,
+              nextId: (query ? filteredFiles[index + 1]?.id : files[index + 1]?.id) || null,
+              onClick: () => {
+                setSelectedFileId(file.id)
+                setIsFocused(true)
+              }
             })
           }}
         </FixedSizeList>
