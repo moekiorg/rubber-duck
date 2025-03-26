@@ -132,6 +132,17 @@ export default function Editor({
           onKeyDownCapture={handleBodyKeyDownCapture as (keyboardEvent) => void}
         />
       )}
+      <div
+        className="editor-bottom"
+        onClick={() => {
+          editor?.current?.view?.focus()
+          editor?.current?.view?.dispatch(
+            editor.current.view.state.update({
+              selection: { anchor: editor.current.view.state.doc.length }
+            })
+          )
+        }}
+      ></div>
     </div>
   )
 }

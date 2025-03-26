@@ -81,6 +81,10 @@ header {
   @apply p-5;
 }
 
+.editor-bottom {
+  @apply w-full h-screen;
+}
+
 .setup-conatiner {
   @apply p-20 flex text-xs items-center justify-center h-[calc(100vh-30px)];
 }
