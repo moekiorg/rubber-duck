@@ -138,7 +138,7 @@ aside {
 }
 
 .file-item {
-  @apply h-full w-full text-left block cursor-default rounded truncate p-2;
+  @apply h-full w-full text-left cursor-default rounded truncate p-2 flex items-center;
 }
 
 .cm-completionIcon {
