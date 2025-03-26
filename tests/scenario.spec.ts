@@ -39,9 +39,9 @@ test.afterEach(async () => {
 })
 
 test('Scenario', async () => {
-  await page.getByText('Open').click()
+  await page.getByText('フォルダを開く').click()
   await page.reload()
-  await page.getByRole('button', { name: 'Add' }).click()
+  await page.locator('[aria-label="新規作成"]').click()
   await expect(page.getByRole('heading', { name: 'Untitled', exact: true })).toBeVisible()
   await expect(page.getByRole('link', { name: 'Untitled', exact: true })).toBeVisible()
   await page.waitForTimeout(1000)

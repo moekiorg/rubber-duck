@@ -82,11 +82,11 @@ header {
 }
 
 .editor-bottom {
-  @apply w-full h-screen;
+  @apply w-full h-[calc(100vh-100px)];
 }
 
-.setup-conatiner {
-  @apply p-20 flex text-[10pt] items-center justify-center h-[calc(100vh-30px)];
+.setup-container {
+  @apply bg-white p-20 flex text-[10pt] items-center justify-center h-[calc(100vh-30px)];
 }
 
 .setup {
@@ -138,7 +138,7 @@ aside {
 }
 
 .file-item {
-  @apply h-full w-full text-left block cursor-default rounded truncate p-2;
+  @apply h-full w-full text-left cursor-default rounded truncate p-2 flex items-center;
 }
 
 .cm-completionIcon {

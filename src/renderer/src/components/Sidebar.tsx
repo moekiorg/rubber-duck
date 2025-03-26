@@ -4,6 +4,7 @@ import { MaterialSymbol } from 'react-material-symbols'
 import { MouseEvent, useContext, useEffect, useRef, useState } from 'react'
 import { FixedSizeList } from 'react-window'
 import { EditorContext } from '@renderer/contexts/editorContext'
+import { useIntl } from 'react-intl'
 
 interface Props {
   files: Array<File>
@@ -81,6 +82,7 @@ export default function Sidebar({
   const [selectedFileId, setSelectedFileId] = useState<string | null>(null)
   const [isFocused, setIsFocused] = useState(false)
   const { ref: editorRef, setIsVisible: setIsEditorVisible } = useContext(EditorContext)
+  const intl = useIntl()
 
   useEffect(() => {
     setTimeout(() => setListHeight(listRef.current?.getBoundingClientRect().height || 0), 5)
@@ -163,7 +165,7 @@ export default function Sidebar({
       window.removeEventListener('keydown', updateSelection)
       window.removeEventListener('resize', handleResize)
     }
-  }, [currentId, editorRef, isFocused, selectedFileId])
+  }, [currentId, editorRef, isFocused, selectedFileId, setIsEditorVisible])
 
   if (!isVisible) {
     return <></>
@@ -179,7 +181,7 @@ export default function Sidebar({
               value={query || ''}
               type="text"
               ref={searchField}
-              placeholder="Search"
+              placeholder={intl.formatMessage({ id: 'search' })}
               autoFocus
               onChange={(e) => onChange(e.target.value)}
               className="search-field"
@@ -212,7 +214,12 @@ export default function Sidebar({
         </FixedSizeList>
       </div>
       <div className="sidebar-footer">
-        <button type="button" className="add-button" onClick={onCreate} title="Add">
+        <button
+          type="button"
+          className="add-button"
+          onClick={onCreate}
+          aria-label={intl.formatMessage({ id: 'add' })}
+        >
           <MaterialSymbol icon="add" size={20} />
         </button>
       </div>
