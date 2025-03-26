@@ -11,7 +11,6 @@ interface Props {
   files: Array<File>
   setCurrentTitle: (value: string) => void
   currentTitle: string
-  isSidebarVisible: boolean
   onBodyChange: (value: string) => void
   titleEditor: RefObject<HTMLTextAreaElement>
 }
@@ -22,7 +21,6 @@ export default function Editor({
   files,
   setCurrentTitle,
   currentTitle,
-  isSidebarVisible,
   onBodyChange,
   titleEditor
 }: Props): JSX.Element {
@@ -118,7 +116,7 @@ export default function Editor({
   }, [currentFile.title, setCurrentTitle])
 
   return (
-    <div className={`editor ${isSidebarVisible ? 'max-w-[calc(100vw-200px)]' : 'max-w-full'}`}>
+    <div className="editor">
       <TitleField
         value={currentTitle || ''}
         onChange={handleTitleChange}

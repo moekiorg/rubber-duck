@@ -28,12 +28,12 @@ export default function Page(): JSX.Element {
   const titleEditor = useRef<HTMLTextAreaElement>(null)
 
   useEffect(() => {
-    window.api.getSidebarState().then((value) => {
-      setIsSidebarVisible(value)
+    window.api.getConfig('sidebar.visible').then((value) => {
+      setIsSidebarVisible(Boolean(value))
     })
     window.electron.ipcRenderer.on('toggle-sidebar', async () => {
-      const value = await window.api.getSidebarState()
-      setIsSidebarVisible(value)
+      const value = await window.api.getConfig('sidebar.visible')
+      setIsSidebarVisible(Boolean(value))
     })
   }, [])
 
@@ -208,7 +208,6 @@ export default function Page(): JSX.Element {
         <article>
           {currentFile ? (
             <Editor
-              isSidebarVisible={isSidebarVisible}
               currentFile={currentFile}
               currentTitle={currentTitle || ''}
               setCurrentTitle={setCurrentTitle}

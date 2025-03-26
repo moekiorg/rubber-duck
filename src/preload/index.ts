@@ -15,7 +15,8 @@ const api = {
     ipcRenderer.invoke('writeFile', title, body, id),
   createFile: (title: string): Promise<File> => ipcRenderer.invoke('createFile', title),
   deleteFile: (title): Promise<boolean> => ipcRenderer.invoke('deleteFile', title),
-  getSidebarState: (): Promise<boolean> => ipcRenderer.invoke('getSidebarState'),
+  getConfig: (key): Promise<string> => ipcRenderer.invoke('getConfig', key),
+  setConfig: (key, value): Promise<string> => ipcRenderer.invoke('setConfig', key, value),
   fetch: (title): Promise<void> => ipcRenderer.invoke('fetch', title),
   getJs: (): Promise<Array<string>> => ipcRenderer.invoke('getJs'),
   getCss: (): Promise<Array<string>> => ipcRenderer.invoke('getCss')

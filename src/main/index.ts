@@ -31,8 +31,9 @@ app.whenReady().then(() => {
     if (BrowserWindow.getAllWindows().length === 0) createWindow()
   })
 
-  if (store.get('sidebar') === undefined) {
-    store.set('sidebar', true)
+  if (store.get('sidebar.visible') === undefined) {
+    store.set('sidebar.visible', true)
+    store.set('sidebar.width', 200)
   }
 
   ipcMain.on('show-context-menu', (event, id, title) => {
@@ -82,7 +83,10 @@ app.whenReady().then(() => {
   ipcMain.handle('writeFile', handleFileWrite)
   ipcMain.handle('createFile', handleFileCreate)
   ipcMain.handle('deleteFile', handleFileDelete)
-  ipcMain.handle('getSidebarState', () => store.get('sidebar'))
+  ipcMain.handle('getConfig', (_, key) => store.get(key))
+  ipcMain.handle('setConfig', (_, key, value) => {
+    store.set(key, value)
+  })
   ipcMain.handle('fetch', (_: Electron.IpcMainInvokeEvent, title: string) => {
     mainWindow?.webContents.send('replace', title)
   })
