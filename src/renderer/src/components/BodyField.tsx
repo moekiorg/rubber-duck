@@ -8,7 +8,7 @@ import { internalLinkCompletion } from '@renderer/lib/internal-link-completion'
 import { internalLink } from '@renderer/lib/internal-link-plugin'
 import { markdownImagePlugin } from '@renderer/lib/markdown-image-plugin'
 import CodeMirror, { EditorView } from '@uiw/react-codemirror'
-import { KeyboardEventHandler, useContext, useEffect, useState } from 'react'
+import { KeyboardEventHandler, useContext, useEffect } from 'react'
 
 interface Props {
   value: string
@@ -17,8 +17,7 @@ interface Props {
 }
 
 export default function BodyField({ value, onChange, onKeyDownCapture }: Props): JSX.Element {
-  const editorRef = useContext(EditorContext)
-  const [isReadonly, setIsReadonly] = useState(false)
+  const { ref: editorRef, isVisible, setIsVisible } = useContext(EditorContext)
 
   useEffect(() => {
     const handleKeyDown = (e): void => {
@@ -26,8 +25,8 @@ export default function BodyField({ value, onChange, onKeyDownCapture }: Props):
         editorRef.current.view?.focus()
       }
       if (e.metaKey && e.key === '0') {
-        setIsReadonly(true)
-        setTimeout(() => setIsReadonly(false), 1)
+        setIsVisible(false)
+        setTimeout(() => setIsVisible(true), 1)
       }
     }
 
@@ -36,9 +35,9 @@ export default function BodyField({ value, onChange, onKeyDownCapture }: Props):
     return (): void => {
       window.removeEventListener('keydown', handleKeyDown)
     }
-  }, [editorRef])
+  }, [editorRef, setIsVisible])
 
-  if (isReadonly) {
+  if (!isVisible) {
     return <></>
   }
 

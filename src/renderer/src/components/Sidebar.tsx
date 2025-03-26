@@ -80,7 +80,7 @@ export default function Sidebar({
   const searchField = useRef<HTMLInputElement>(null)
   const [selectedFileId, setSelectedFileId] = useState<string | null>(null)
   const [isFocused, setIsFocused] = useState(false)
-  const editorRef = useContext(EditorContext)
+  const { ref: editorRef, setIsVisible: setIsEditorVisible } = useContext(EditorContext)
 
   useEffect(() => {
     setTimeout(() => setListHeight(listRef.current?.getBoundingClientRect().height || 0), 5)
@@ -112,19 +112,26 @@ export default function Sidebar({
         setSelectedFileId(
           document.querySelector<HTMLElement>(`[data-id="${selectedFileId}"]`)?.dataset.next || null
         )
+        if (editorRef?.current?.view?.hasFocus) {
+          setIsEditorVisible(false)
+          setTimeout(() => setIsEditorVisible(true), 1)
+        }
       }
       if (e.key === 'ArrowUp') {
         setSelectedFileId(
           document.querySelector<HTMLElement>(`[data-id="${selectedFileId}"]`)?.dataset.previous ||
             null
         )
+        if (editorRef?.current?.view?.hasFocus) {
+          setIsEditorVisible(false)
+          setTimeout(() => setIsEditorVisible(true), 1)
+        }
       }
       if (e.metaKey && e.key === '1') {
         setIsFocused(false)
       }
       if (e.key === ' ') {
         document.querySelector<HTMLElement>(`[data-id="${selectedFileId}"]`)?.click()
-        setTimeout(() => editorRef?.current?.view?.focus(), 500)
       }
     }
 
@@ -136,7 +143,7 @@ export default function Sidebar({
       window.removeEventListener('keydown', updateSelection)
       window.removeEventListener('resize', handleResize)
     }
-  }, [isFocused, selectedFileId])
+  }, [currentId, editorRef, isFocused, selectedFileId])
 
   if (!isVisible) {
     return <></>
