@@ -109,19 +109,39 @@ export default function Sidebar({
         return
       }
       if (e.key === 'ArrowDown') {
+        const currentEl = document.querySelector<HTMLElement>(`[data-id="${selectedFileId}"]`)
+        const id = currentEl?.dataset.next
         setSelectedFileId(
-          document.querySelector<HTMLElement>(`[data-id="${selectedFileId}"]`)?.dataset.next || null
+          currentEl?.parentElement?.nextElementSibling ? id || null : selectedFileId
         )
+        const el = document.querySelector<HTMLElement>(`[data-id="${id}"]`)
+        const rect = el?.getBoundingClientRect()
+        const height = listRef.current?.children[0].clientHeight
+        if (rect && height) {
+          if (rect.top > height) {
+            el?.scrollIntoView({ behavior: 'smooth', block: 'nearest' })
+          }
+        }
+        e.preventDefault()
         if (editorRef?.current?.view?.hasFocus) {
           setIsEditorVisible(false)
           setTimeout(() => setIsEditorVisible(true), 1)
         }
       }
       if (e.key === 'ArrowUp') {
+        const currentEl = document.querySelector<HTMLElement>(`[data-id="${selectedFileId}"]`)
+        const id = currentEl?.dataset.previous
         setSelectedFileId(
-          document.querySelector<HTMLElement>(`[data-id="${selectedFileId}"]`)?.dataset.previous ||
-            null
+          currentEl?.parentElement?.previousElementSibling ? id || null : selectedFileId
         )
+        const el = document.querySelector<HTMLElement>(`[data-id="${id}"]`)
+        const rect = el?.getBoundingClientRect()
+        if (rect) {
+          if (rect.top < 10) {
+            el?.scrollIntoView({ behavior: 'smooth', block: 'nearest' })
+          }
+        }
+        e.preventDefault()
         if (editorRef?.current?.view?.hasFocus) {
           setIsEditorVisible(false)
           setTimeout(() => setIsEditorVisible(true), 1)
