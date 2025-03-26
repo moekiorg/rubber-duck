@@ -21,7 +21,7 @@ test.beforeEach(async () => {
   if (existsSync(testNotesPath)) {
     const entries = readdirSync(testNotesPath)
     for (const entry of entries) {
-      if (!['example2.md', 'example.md', '.rubber-duck'].includes(entry)) {
+      if (!['example2.md', 'example.md', '.rubber-duck', 'lena.png'].includes(entry)) {
         rmSync(join(testNotesPath, entry), { recursive: true })
       }
     }
@@ -56,7 +56,8 @@ test('Scenario', async () => {
   await page.waitForTimeout(1000)
   await page.locator('#example').first().click()
   await expect(page.locator('a.cm-hyper-link-icon').first()).toBeVisible()
-  await expect(page.getByRole('img')).toBeVisible()
+  await expect(page.locator('img[src="https://picsum.photos/200/300"]')).toBeVisible()
+  await expect(page.locator('img[src$="lena.png"]')).toBeVisible()
   await page.getByText('example2').click()
   await page.waitForTimeout(1000)
   page.locator('a.cm-internal-link-icon').first().click()

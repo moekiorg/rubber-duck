@@ -8,7 +8,7 @@ import { internalLinkCompletion } from '@renderer/lib/internal-link-completion'
 import { internalLink } from '@renderer/lib/internal-link-plugin'
 import { markdownImagePlugin } from '@renderer/lib/markdown-image-plugin'
 import CodeMirror, { EditorView } from '@uiw/react-codemirror'
-import { KeyboardEventHandler, useContext, useEffect } from 'react'
+import { KeyboardEventHandler, useCallback, useContext, useEffect } from 'react'
 
 interface Props {
   value: string
@@ -37,6 +37,43 @@ export default function BodyField({ value, onChange, onKeyDownCapture }: Props):
     }
   }, [editorRef, setIsVisible])
 
+  const insertImage = useCallback(
+    (name, pos): void => {
+      const state = editorRef?.current?.state
+      if (!state) {
+        return
+      }
+      editorRef.current.view?.dispatch({
+        changes: { from: pos, insert: `![](${name})` },
+        selection: { anchor: pos + 2 }
+      })
+      editorRef.current.view?.focus()
+    },
+    [editorRef]
+  )
+
+  const handleFileDrop = (e): void => {
+    e.preventDefault()
+
+    const items = e.dataTransfer!.items!
+    for (let i = 0; i < items.length; i++) {
+      const item = items[i].webkitGetAsEntry()
+      if (item && item.isFile) {
+        new Promise<File>((resolve, reject) => {
+          ;(item as FileSystemFileEntry).file(resolve, reject)
+        }).then((file) => {
+          window.api.copyFile(file).then(() => {
+            const pos = editorRef?.current?.view?.posAtCoords({
+              x: e.pageX,
+              y: e.pageY
+            })
+            insertImage(item.name, pos)
+          })
+        })
+      }
+    }
+  }
+
   if (!isVisible) {
     return <></>
   }
@@ -53,6 +90,9 @@ export default function BodyField({ value, onChange, onKeyDownCapture }: Props):
         ...highlights,
         autocompletion({
           override: [internalLinkCompletion]
+        }),
+        EditorView.domEventHandlers({
+          drop: handleFileDrop
         })
       ]}
       onChange={onChange}

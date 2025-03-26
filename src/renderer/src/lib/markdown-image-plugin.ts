@@ -37,12 +37,26 @@ export const markdownImagePlugin = ViewPlugin.fromClass(
         while ((match = regex.exec(text))) {
           const url = match[1]
           const start = from + match.index
-          widgets.push(
-            Decoration.widget({
-              widget: new ImageWidget(url),
-              side: 1
-            }).range(start)
-          )
+
+          if (!url.match(/.+\.(png|jpe?g|gif|webp)/)) {
+            Decoration.set(widgets)
+          }
+          if (!url.match('http')) {
+            const dir = window.rubberDuck.path
+            widgets.push(
+              Decoration.widget({
+                widget: new ImageWidget(`app:/${dir}/${url}`),
+                side: 1
+              }).range(start)
+            )
+          } else {
+            widgets.push(
+              Decoration.widget({
+                widget: new ImageWidget(url),
+                side: 1
+              }).range(start)
+            )
+          }
         }
       }
 

@@ -1,4 +1,4 @@
-import { app, BrowserWindow, ipcMain, Menu, protocol, shell } from 'electron'
+import { app, BrowserWindow, ipcMain, Menu, net, protocol, shell } from 'electron'
 import { electronApp, optimizer } from '@electron-toolkit/utils'
 import { createWindow } from './lib/create-window'
 import { handleDirOpen } from './listeners/handle-dir-open'
@@ -8,17 +8,17 @@ import { handleFileWrite } from './listeners/handle-file-write'
 import { handleFileCreate } from './listeners/handle-file-create'
 import { handleFileDelete } from './listeners/handle-file-delete'
 import { store } from './lib/store'
-import { FSWatcher, readdirSync, watch } from 'fs'
-import { join, normalize } from 'path'
+import { FSWatcher, readdirSync, watch, writeFileSync } from 'fs'
+import { basename, join, normalize } from 'path'
 import { intl } from './lib/intl'
 
 let watcher: FSWatcher | null = null
 let mainWindow: BrowserWindow
 
 app.whenReady().then(() => {
-  protocol.registerFileProtocol('custom-file', (request, callback) => {
-    const url = request.url.replace('custom-file://', '')
-    callback({ path: normalize(url) })
+  protocol.handle('app', (request: Request): Promise<GlobalResponse> => {
+    const url = request.url.replace('app://', 'file:///')
+    return net.fetch(normalize(url))
   })
 
   electronApp.setAppUserModelId('com.electron')
@@ -85,9 +85,7 @@ app.whenReady().then(() => {
   ipcMain.handle('createFile', handleFileCreate)
   ipcMain.handle('deleteFile', handleFileDelete)
   ipcMain.handle('getConfig', (_, key) => store.get(key))
-  ipcMain.handle('setConfig', (_, key, value) => {
-    store.set(key, value)
-  })
+  ipcMain.handle('setConfig', (_, key, value) => store.set(key, value))
   ipcMain.handle('fetch', (_: Electron.IpcMainInvokeEvent, title: string) => {
     mainWindow?.webContents.send('replace', title)
   })
@@ -96,7 +94,7 @@ app.whenReady().then(() => {
       const dirPath = store.get('path') as string
       return readdirSync(join(dirPath, '.rubber-duck'))
         .filter((file) => file.endsWith('.js'))
-        .map((file) => `custom-file://${join(dirPath, '.rubber-duck', file)}`)
+        .map((file) => `app://${join(dirPath, '.rubber-duck', file)}`)
     } catch {
       return []
     }
@@ -106,10 +104,18 @@ app.whenReady().then(() => {
       const dirPath = store.get('path') as string
       return readdirSync(join(dirPath, '.rubber-duck'))
         .filter((file) => file.endsWith('.css'))
-        .map((file) => `custom-file://${join(dirPath, '.rubber-duck', file)}`)
+        .map((file) => `app://${join(dirPath, '.rubber-duck', file)}`)
     } catch {
       return []
     }
+  })
+  ipcMain.handle('copy-file', async (_, filePath, buffer) => {
+    const fileName = basename(filePath)
+    const targetPath = join(store.get('path') as string, fileName)
+
+    writeFileSync(targetPath, buffer)
+
+    return targetPath
   })
 })
 

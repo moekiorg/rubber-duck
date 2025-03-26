@@ -1,25 +1,33 @@
 import { contextBridge, ipcRenderer } from 'electron'
 import { electronAPI } from '@electron-toolkit/preload'
-
-export interface File {
-  id: string
-  title: string
-  mtime: string
-}
+import { File as FileType } from './file'
 
 const api = {
   openFile: (): Promise<void> => ipcRenderer.invoke('dialog:openDir'),
-  getFiles: (): Promise<Array<File>> => ipcRenderer.invoke('getFiles'),
+  getFiles: (): Promise<Array<FileType>> => ipcRenderer.invoke('getFiles'),
   getBody: (id: string): Promise<string> => ipcRenderer.invoke('getBody', id),
   writeFile: (title: string, body: string, id: string): Promise<boolean> =>
     ipcRenderer.invoke('writeFile', title, body, id),
-  createFile: (title: string): Promise<File> => ipcRenderer.invoke('createFile', title),
+  createFile: (title: string): Promise<FileType> => ipcRenderer.invoke('createFile', title),
   deleteFile: (title): Promise<boolean> => ipcRenderer.invoke('deleteFile', title),
   getConfig: (key): Promise<string> => ipcRenderer.invoke('getConfig', key),
   setConfig: (key, value): Promise<string> => ipcRenderer.invoke('setConfig', key, value),
   fetch: (title): Promise<void> => ipcRenderer.invoke('fetch', title),
   getJs: (): Promise<Array<string>> => ipcRenderer.invoke('getJs'),
-  getCss: (): Promise<Array<string>> => ipcRenderer.invoke('getCss')
+  getCss: (): Promise<Array<string>> => ipcRenderer.invoke('getCss'),
+  copyFile: (file: File): Promise<string> => {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader()
+      reader.onload = async (): Promise<void> => {
+        const buffer = Buffer.from(reader.result as ArrayBuffer)
+        const fileName = file.name
+        const result = await ipcRenderer.invoke('copy-file', fileName, buffer)
+        resolve(result)
+      }
+      reader.onerror = reject
+      reader.readAsArrayBuffer(file)
+    })
+  }
 }
 
 // Use `contextBridge` APIs to expose Electron APIs to
