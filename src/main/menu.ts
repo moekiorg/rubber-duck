@@ -71,12 +71,12 @@ const template = [
     submenu: [
       {
         click: (): void => {
-          store.set('sidebar', !store.get('sidebar'))
-          mainWindow?.webContents.send('toggle-sidebar', store.get('sidebar'))
+          store.set('sidebar.visible', !store.get('sidebar.visible'))
+          mainWindow?.webContents.send('toggle-sidebar', store.get('sidebar.visible'))
         },
         label: intl.formatMessage({ id: 'sidebar' }),
         accelerator: 'Cmd+B',
-        checked: await store.get('sidebar')
+        checked: await store.get('sidebar.visible')
       },
       { type: 'separator' },
       { role: 'zoomIn', label: intl.formatMessage({ id: 'zoomIn' }) },

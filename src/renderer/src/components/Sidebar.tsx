@@ -5,6 +5,7 @@ import { MouseEvent, useContext, useEffect, useRef, useState } from 'react'
 import { FixedSizeList } from 'react-window'
 import { EditorContext } from '@renderer/contexts/editorContext'
 import { useIntl } from 'react-intl'
+import interact from 'interactjs'
 
 interface Props {
   files: Array<File>
@@ -83,6 +84,17 @@ export default function Sidebar({
   const [isFocused, setIsFocused] = useState(false)
   const { ref: editorRef, setIsVisible: setIsEditorVisible } = useContext(EditorContext)
   const intl = useIntl()
+  const [width, setWidth] = useState(300)
+
+  useEffect(() => {
+    window.api.getConfig('sidebar.width').then((value) => {
+      setWidth(Number(value))
+    })
+    window.electron.ipcRenderer.on('toggle-sidebar', async () => {
+      const value = await window.api.getConfig('sidebar.width')
+      setWidth(Number(value))
+    })
+  }, [])
 
   useEffect(() => {
     setTimeout(() => setListHeight(listRef.current?.getBoundingClientRect().height || 0), 5)
@@ -167,12 +179,34 @@ export default function Sidebar({
     }
   }, [currentId, editorRef, isFocused, selectedFileId, setIsEditorVisible])
 
+  useEffect(() => {
+    interact('aside').resizable({
+      edges: { left: false, right: true, bottom: false, top: false },
+      modifiers: [
+        interact.modifiers.restrictSize({
+          min: { width: 100, height: 500 },
+          max: { width: 500, height: 500 }
+        })
+      ],
+      listeners: {
+        move(event) {
+          requestAnimationFrame(() => {
+            const target = event.target
+            target.style.width = event.rect.width + 'px'
+            setWidth(event.rect.width)
+            window.api.setConfig('sidebar.width', event.rect.width)
+          })
+        }
+      }
+    })
+  }, [])
+
   if (!isVisible) {
     return <></>
   }
 
   return (
-    <aside>
+    <aside style={{ width: `${width}px` }}>
       {isSearchVisible && (
         <div className="search-bar-container">
           <div className="search-bar">

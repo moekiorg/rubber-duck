@@ -14,7 +14,8 @@ interface API {
   writeFile: (string, string, string) => Promise<boolean>
   createFile: (title?) => Promise<File>
   deleteFile: (string) => Promise<boolean>
-  getSidebarState: () => Promise<boolean>
+  getConfig: (string) => Promise<string>
+  setConfig: (string, string) => Promise<void>
   fetch: (string) => Promise<void>
   getJs: () => Promise<Array<string>>
   getCss: () => Promise<Array<string>>
