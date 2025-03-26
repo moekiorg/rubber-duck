@@ -28,7 +28,7 @@ export default function Editor({
 }: Props): JSX.Element {
   const [editorVisible, setEditorVisible] = useState(true)
   const [currentBody, setCurrentBody] = useState('')
-  const editor = useContext(EditorContext)
+  const { ref: editor } = useContext(EditorContext)
 
   const writeFile = useDebouncedCallback(async (t, b, target) => {
     const result = window.api.writeFile(t, b, target)
