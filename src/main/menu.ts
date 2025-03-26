@@ -3,17 +3,7 @@ import { handleDirOpen } from './listeners/handle-dir-open'
 import { handleSearch } from './listeners/handle-search'
 import { mainWindow } from '.'
 import { store } from './lib/store'
-import { createIntl, createIntlCache } from '@formatjs/intl'
-import { ja } from './lib/ja'
-
-const cache = createIntlCache()
-const intl = createIntl(
-  {
-    locale: 'ja',
-    messages: ja
-  },
-  cache
-)
+import { intl } from './lib/intl'
 
 const template = [
   {
