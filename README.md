@@ -1,5 +1,5 @@
-# RubberDuck
+# TextZen
 
-<img alt="RubberDuck" src="./build/icon.png" width="200">
+<img alt="TextZen" src="./build/icon.png" width="200">
 
 WIP

@@ -27,8 +27,8 @@ let specs = [
   { tag: tags.invalid, color: '#f00' }
 ]
 
-if (window.rubberDuck?.editorStyles) {
-  specs = window.rubberDuck.editorStyles
+if (window.textZen?.editorStyles) {
+  specs = window.textZen.editorStyles
 }
 
 export const highlights = [

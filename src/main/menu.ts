@@ -93,7 +93,7 @@ const template = [
       {
         label: intl.formatMessage({ id: 'github' }),
         click: (): void => {
-          shell.openExternal('https://github.com/moekiorg/rubber-duck')
+          shell.openExternal('https://github.com/moekiorg/text-zen')
         }
       }
     ]

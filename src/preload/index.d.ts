@@ -1,7 +1,7 @@
 import { ElectronAPI } from '@electron-toolkit/preload'
 import { File as FileType } from '@renderer/components/Page'
 
-interface RubberDuck {
+interface TextZen {
   editorStyles: Array<TagStyle>
   files: Array<FileType>
   isCompleting: boolean
@@ -27,7 +27,7 @@ declare global {
   interface Window {
     electron: ElectronAPI
     api: API
-    rubberDuck: RubberDuck
+    textZen: TextZen
     EditContext: boolean
   }
 }

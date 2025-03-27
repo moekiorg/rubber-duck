@@ -92,9 +92,9 @@ app.whenReady().then(() => {
   ipcMain.handle('getJs', async () => {
     try {
       const dirPath = store.get('path') as string
-      return readdirSync(join(dirPath, '.rubber-duck'))
+      return readdirSync(join(dirPath, '.text-zen'))
         .filter((file) => file.endsWith('.js'))
-        .map((file) => `app://${join(dirPath, '.rubber-duck', file)}`)
+        .map((file) => `app://${join(dirPath, '.text-zen', file)}`)
     } catch {
       return []
     }
@@ -102,9 +102,9 @@ app.whenReady().then(() => {
   ipcMain.handle('getCss', async () => {
     try {
       const dirPath = store.get('path') as string
-      return readdirSync(join(dirPath, '.rubber-duck'))
+      return readdirSync(join(dirPath, '.text-zen'))
         .filter((file) => file.endsWith('.css'))
-        .map((file) => `app://${join(dirPath, '.rubber-duck', file)}`)
+        .map((file) => `app://${join(dirPath, '.text-zen', file)}`)
     } catch {
       return []
     }

@@ -1,5 +1,5 @@
 appId: com.electron.app
-productName: rubber-duck
+productName: TextZen
 directories:
   buildResources: build
 files:
@@ -12,7 +12,7 @@ files:
 asarUnpack:
   - resources/**
 win:
-  executableName: rubber-duck
+  executableName: TextZen
 nsis:
   artifactName: ${name}-${version}-setup.${ext}
   shortcutName: ${productName}
