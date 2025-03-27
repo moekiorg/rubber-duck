@@ -21,7 +21,7 @@ test.beforeEach(async () => {
   if (existsSync(testNotesPath)) {
     const entries = readdirSync(testNotesPath)
     for (const entry of entries) {
-      if (!['example2.md', 'example.md', '.rubber-duck', 'lena.png'].includes(entry)) {
+      if (!['example2.md', 'example.md', '.text-zen', 'lena.png'].includes(entry)) {
         rmSync(join(testNotesPath, entry), { recursive: true })
       }
     }

@@ -2,7 +2,7 @@ import { NavLink } from 'react-router'
 import { File } from './Page'
 import { MaterialSymbol } from 'react-material-symbols'
 import { MouseEvent, useContext, useEffect, useRef, useState } from 'react'
-import { VariableSizeList } from 'react-window'
+import { FixedSizeList } from 'react-window'
 import { EditorContext } from '@renderer/contexts/editorContext'
 import { useIntl } from 'react-intl'
 import interact from 'interactjs'
@@ -97,10 +97,16 @@ export default function Sidebar({
   }, [])
 
   useEffect(() => {
-    setTimeout(() => setListHeight(listRef.current?.getBoundingClientRect().height ? listRef.current?.getBoundingClientRect().height :  0), 5)
+    setTimeout(() => {
+      setListHeight(
+        listRef.current?.getBoundingClientRect().height
+          ? listRef.current?.getBoundingClientRect().height - 20
+          : 0
+      )
+    }, 5)
 
     const handleResize = (): void => {
-      setListHeight(listRef.current!.getBoundingClientRect().height)
+      setListHeight(listRef.current!.getBoundingClientRect().height - 20)
     }
 
     window.addEventListener('resize', handleResize)
@@ -225,37 +231,29 @@ export default function Sidebar({
         </div>
       )}
       <div ref={listRef} className="file-list">
-        <VariableSizeList
+        <FixedSizeList
           height={listHeight}
-          itemCount={query ? filteredFiles.length + 2 : files.length + 2}
-          itemSize={(index: number) => {
-            if (index === 0 || (query ? index === filteredFiles.length + 1: index === files.length  + 1)) {
-              return 6
-            } else {
-              return 32
-            }
-          }}
+          width="100%"
+          itemCount={query ? filteredFiles.length : files.length}
+          itemSize={32}
         >
           {({ style, index }) => {
-            if (index === 0 || (query ? index === filteredFiles.length + 1 : index === files.length + 1)) {
-              return <div style={style}></div>
-            }
-            const file = query ? filteredFiles[index - 1] : files[index - 1]
+            const file = query ? filteredFiles[index] : files[index]
             return FileItem({
               style,
               title: file?.title,
               isActive: file.id === currentId,
               isSelected: file.id === selectedFileId,
               id: file.id,
-              previousId: (query ? filteredFiles[index - 2]?.id : files[index - 2]?.id) || null,
-              nextId: (query ? filteredFiles[index]?.id : files[index]?.id) || null,
+              previousId: (query ? filteredFiles[index - 1]?.id : files[index - 1]?.id) || null,
+              nextId: (query ? filteredFiles[index + 1]?.id : files[index]?.id + 1) || null,
               onClick: () => {
                 setSelectedFileId(file.id)
                 setIsFocused(true)
               }
             })
           }}
-        </VariableSizeList>
+        </FixedSizeList>
       </div>
       <div className="sidebar-footer">
         <button

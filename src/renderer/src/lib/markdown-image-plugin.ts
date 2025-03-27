@@ -42,7 +42,7 @@ export const markdownImagePlugin = ViewPlugin.fromClass(
             Decoration.set(widgets)
           }
           if (!url.match('http')) {
-            const dir = window.rubberDuck.path
+            const dir = window.textZen.path
             widgets.push(
               Decoration.widget({
                 widget: new ImageWidget(`app:/${dir}/${url}`),
