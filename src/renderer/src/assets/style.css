@@ -56,7 +56,7 @@ article {
 }
 
 .title-field {
-  @apply outline-none text-lg p-2 resize-none w-full;
+  @apply outline-none text-lg p-[6px] resize-none w-full;
 }
 
 header {
