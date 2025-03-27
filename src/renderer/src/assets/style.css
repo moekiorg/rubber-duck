@@ -96,7 +96,7 @@ aside {
 }
 
 .file-list {
-  @apply h-[calc(100vh-90px)] relative pt-2 pb-[70px];
+  @apply h-full relative pt-2 pb-[70px];
 }
 
 .search-bar-container {
