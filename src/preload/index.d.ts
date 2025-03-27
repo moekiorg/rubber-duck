@@ -28,5 +28,6 @@ declare global {
     electron: ElectronAPI
     api: API
     rubberDuck: RubberDuck
+    EditContext: boolean
   }
 }

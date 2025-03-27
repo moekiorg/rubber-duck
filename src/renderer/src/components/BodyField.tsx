@@ -16,6 +16,8 @@ interface Props {
   onKeyDownCapture: KeyboardEventHandler<HTMLDivElement>
 }
 
+window.EditContext = false
+
 export default function BodyField({ value, onChange, onKeyDownCapture }: Props): JSX.Element {
   const { ref: editorRef, isVisible, setIsVisible } = useContext(EditorContext)
 
