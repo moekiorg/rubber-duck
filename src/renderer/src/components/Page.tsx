@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, useState } from 'react'
+import { useCallback, useContext, useEffect, useRef, useState } from 'react'
 import 'react-material-symbols/rounded'
 import { useLocation, useNavigate } from 'react-router'
 import Sidebar from './Sidebar'
@@ -6,6 +6,8 @@ import Header from './Header'
 import Fuse from 'fuse.js'
 import Editor from './Editor'
 import { FormattedMessage } from 'react-intl'
+import { Search } from './Search'
+import { EditorContext } from '@renderer/contexts/editorContext'
 
 export interface File {
   id: string
@@ -27,6 +29,30 @@ export default function Page(): JSX.Element {
   const [isSidebarVisible, setIsSidebarVisible] = useState(false)
   const [isDeleted, setIsDeleted] = useState(false)
   const titleEditor = useRef<HTMLTextAreaElement>(null)
+  const { ref: bodyEditor } = useContext(EditorContext)
+  const [isSearchMode, setIsSearchMode] = useState(false)
+
+  useEffect(() => {
+    if (location.state?.line) {
+      setTimeout(() => {
+        const linePos = bodyEditor?.current?.view?.state.doc.line(location.state.line)
+        if (linePos) {
+          bodyEditor?.current?.view?.focus()
+          bodyEditor?.current?.view?.dispatch({
+            selection: { anchor: linePos.from, head: linePos.from },
+            scrollIntoView: true
+          })
+        }
+      }, 50)
+    }
+  }, [bodyEditor, location])
+
+  useEffect(() => {
+    window.electron.ipcRenderer.on('toggle-search-full-text', () => {
+      setIsSearchMode(!isSearchMode)
+      document.querySelector('article')!.scrollTo(0, 0)
+    })
+  }, [isSearchMode])
 
   useEffect(() => {
     window.api.getConfig('sidebar.visible').then((value) => {
@@ -205,29 +231,44 @@ export default function Page(): JSX.Element {
           query={query}
         />
         <article>
-          <Header title={currentTitle || ''} onCreate={() => handleCreate()} />
-          {currentFile ? (
-            <Editor
-              currentFile={currentFile}
-              currentTitle={currentTitle || ''}
-              setCurrentTitle={setCurrentTitle}
-              files={allFiles}
-              onTitleChange={handleTitleChange}
-              onBodyChange={handleBodyChange}
-              titleEditor={titleEditor}
-            />
-          ) : (
-            <div className="empty-page">
-              <div className="container">
-                <button type="button" onClick={() => handleCreate()} className="new-file-button">
-                  <FormattedMessage id="add" />
-                </button>
-                <div className="shortcut">
-                  <div className="keyboard">⌘</div>
-                  <div className="keyboard">N</div>
+          <Header
+            title={currentTitle || ''}
+            onCreate={() => handleCreate()}
+            onToggleSearchMode={() => {
+              setIsSearchMode(!isSearchMode)
+            }}
+          />
+          <Search visible={isSearchMode} setIsSearchMode={setIsSearchMode}></Search>
+          {!isSearchMode && (
+            <>
+              {currentFile ? (
+                <Editor
+                  currentFile={currentFile}
+                  currentTitle={currentTitle || ''}
+                  setCurrentTitle={setCurrentTitle}
+                  files={allFiles}
+                  onTitleChange={handleTitleChange}
+                  onBodyChange={handleBodyChange}
+                  titleEditor={titleEditor}
+                />
+              ) : (
+                <div className="empty-page">
+                  <div className="container">
+                    <button
+                      type="button"
+                      onClick={() => handleCreate()}
+                      className="new-file-button"
+                    >
+                      <FormattedMessage id="add" />
+                    </button>
+                    <div className="shortcut">
+                      <div className="keyboard">⌘</div>
+                      <div className="keyboard">N</div>
+                    </div>
+                  </div>
                 </div>
-              </div>
-            </div>
+              )}
+            </>
           )}
         </article>
       </main>

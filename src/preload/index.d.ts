@@ -21,6 +21,7 @@ interface API {
   getJs: () => Promise<Array<string>>
   getCss: () => Promise<Array<string>>
   copyFile: (File) => Promise<string>
+  searchFullText: (string) => Promise<Array<SearchResult>>
 }
 
 declare global {

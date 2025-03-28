@@ -7,6 +7,10 @@ input {
 }
 
 * {
+  @apply placeholder:text-gray-300;
+}
+
+* {
   scrollbar-color: rgba(0, 0, 0, 0.3) transparent;
 }
 
@@ -48,7 +52,7 @@ main {
 }
 
 article {
-  @apply w-full h-screen overflow-y-scroll;
+  @apply w-full h-screen overflow-y-scroll bg-white;
 }
 
 .empty-page {
@@ -114,7 +118,7 @@ aside {
 }
 
 .search-field {
-  @apply outline-none placeholder:text-gray-300;
+  @apply outline-none;
 }
 
 .sidebar-footer {
@@ -123,6 +127,10 @@ aside {
 
 .add-button {
   @apply absolute left-2 rounded p-2 text-gray-600 flex items-center transition-all hover:bg-[rgba(0,0,0,0.05)];
+}
+
+.search-button {
+  @apply absolute right-2 rounded p-2 text-gray-600 flex items-center transition-all hover:bg-[rgba(0,0,0,0.05)];
 }
 
 .file-item {
@@ -148,4 +156,40 @@ input[type='checkbox'] {
 
 .new-file-button {
   @apply hover:bg-[rgb(230,230,230)] rounded py-1 px-2 transition-all;
+}
+
+.highlight {
+  @apply bg-purple-100;
+}
+
+.fts {
+  @apply bg-white min-h-full;
+}
+
+.fts-nf {
+  @apply min-h-[calc(100vh-94px)];
+}
+
+.fts-rc {
+  @apply py-4 px-2 cursor-default;
+}
+
+.fts-title {
+  @apply text-[12pt] font-semibold cursor-default p-1;
+}
+
+.fts-line {
+  @apply text-gray-800 cursor-default block p-1;
+}
+
+.fts-result {
+  @apply min-h-[calc(100vh-94px)] px-5 py-2 divide-y divide-gray-300;
+}
+
+.fts-header {
+  @apply p-2 shadow-sm sticky top-[48px] bg-[rgb(245,245,245)];
+}
+
+.fts-field {
+  @apply rounded-lg bg-white px-2 py-1 w-full border border-gray-300;
 }

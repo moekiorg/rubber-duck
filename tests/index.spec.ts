@@ -89,3 +89,11 @@ test('リンクを書き換えること', async () => {
   await page.getByRole('link', { name: '参照元', exact: true }).click()
   await expect(page.getByText('[[参照先編集済み]]')).toBeVisible()
 })
+
+test('全文検索ができること', async () => {
+  await page.locator('[aria-label="全文検索"]').click()
+  await page.locator('input').focus()
+  await page.keyboard.insertText('Example Image')
+  await page.keyboard.press('Enter')
+  await expect(page.locator('.fts-line')).toBeVisible()
+})

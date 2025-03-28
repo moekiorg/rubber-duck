@@ -11,6 +11,7 @@ import { store } from './lib/store'
 import { FSWatcher, readdirSync, watch, writeFileSync } from 'fs'
 import { basename, join, normalize } from 'path'
 import { intl } from './lib/intl'
+import { handleFullTextSearch } from './listeners/handle-full-text-search'
 
 let watcher: FSWatcher | null = null
 let mainWindow: BrowserWindow
@@ -122,6 +123,10 @@ app.whenReady().then(() => {
     writeFileSync(targetPath, buffer)
 
     return targetPath
+  })
+  ipcMain.handle('searchFullText', async (_, query) => {
+    const results = handleFullTextSearch(query)
+    return results
   })
 })
 
