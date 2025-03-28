@@ -1,7 +1,7 @@
 import { test, _electron, expect } from '@playwright/test'
 import type { ElectronApplication, Page } from '@playwright/test'
-import * as eph from 'electron-playwright-helpers'
 import { existsSync, readdirSync, rmSync } from 'fs'
+import * as eph from 'electron-playwright-helpers'
 import { dirname, join } from 'path'
 import { fileURLToPath } from 'url'
 
@@ -11,13 +11,14 @@ const __dirname = dirname(__filename)
 let electronApp: ElectronApplication
 let page: Page
 
-test.beforeEach(async () => {
+test.beforeAll(async () => {
   const testUserDataPath = join(__dirname, 'test-user-data')
   const testNotesPath = join(__dirname, 'notes')
 
   if (existsSync(testUserDataPath)) {
     rmSync(testUserDataPath, { recursive: true })
   }
+
   if (existsSync(testNotesPath)) {
     const entries = readdirSync(testNotesPath)
     for (const entry of entries) {
@@ -32,15 +33,15 @@ test.beforeEach(async () => {
   })
   page = await electronApp.firstWindow()
   await eph.stubDialog(electronApp, 'showOpenDialog', { filePaths: [testNotesPath] })
+  await page.getByText('フォルダを開く').click()
+  await page.reload()
 })
 
-test.afterEach(async () => {
+test.afterAll(async () => {
   await electronApp.close()
 })
 
-test('Scenario', async () => {
-  await page.getByText('フォルダを開く').click()
-  await page.reload()
+test('シナリオ', async () => {
   await page.locator('[aria-label="新規作成"]').click()
   await expect(page.getByRole('heading', { name: 'Untitled', exact: true })).toBeVisible()
   await expect(page.getByRole('link', { name: 'Untitled', exact: true })).toBeVisible()
@@ -65,4 +66,26 @@ test('Scenario', async () => {
   await expect(page.getByText('inserted')).toBeVisible()
 
   // TODO: Context menu
+})
+
+test('リンクを書き換えること', async () => {
+  await page.locator('[aria-label="新規作成"]').click()
+  await page.waitForTimeout(1000)
+  await page.keyboard.insertText('参照先')
+  await page.waitForTimeout(1000)
+
+  await page.locator('[aria-label="新規作成"]').click()
+  await page.waitForTimeout(1000)
+  await page.keyboard.insertText('参照元')
+  await page.locator('.cm-scroller').click()
+  await page.keyboard.insertText('[[参照先]]')
+  await page.waitForTimeout(1000)
+
+  await page.getByRole('link', { name: '参照先', exact: true }).click()
+  await page.locator('.title-field').click()
+  await page.keyboard.insertText('編集済み')
+  await page.waitForTimeout(1000)
+
+  await page.getByRole('link', { name: '参照元', exact: true }).click()
+  await expect(page.getByText('[[参照先編集済み]]')).toBeVisible()
 })

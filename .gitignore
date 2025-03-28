@@ -11,7 +11,7 @@ out
 /blob-report/
 /playwright/.cache/
 
-/tests/test-user-data
+/tests/test-user-data/
 /tests/notes/*
 !/tests/notes/example.md
 !/tests/notes/example2.md
