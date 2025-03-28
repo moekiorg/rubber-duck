@@ -199,9 +199,10 @@ export default function Sidebar({
         move(event) {
           requestAnimationFrame(() => {
             const target = event.target
-            target.style.width = event.rect.width + 'px'
-            setWidth(event.rect.width)
-            window.api.setConfig('sidebar.width', event.rect.width)
+            const newWidth = event.rect.width * 1.3
+            target.style.width = newWidth + 'px'
+            setWidth(newWidth)
+            window.api.setConfig('sidebar.width', newWidth)
           })
         }
       }
