@@ -9,7 +9,6 @@ import interact from 'interactjs'
 
 interface Props {
   files: Array<File>
-  onCreate: () => void
   isSearchVisible: boolean
   onChange: (value: string) => void
   filteredFiles: Array<File>
@@ -57,7 +56,7 @@ const FileItem = ({
         data-id={id}
         data-next={nextId}
         data-previous={previousId}
-        className={`file-item ${isActive || isSelected ? 'bg-gray-200' : ''}`}
+        className={`file-item ${isActive || isSelected ? 'bg-[rgba(0,0,0,0.05)]' : ''}`}
         onContextMenu={(e) => handleContextMenu(e, id)}
         onClick={onClick}
       >
@@ -69,7 +68,6 @@ const FileItem = ({
 
 export default function Sidebar({
   files,
-  onCreate,
   isSearchVisible,
   onChange,
   filteredFiles,
@@ -209,12 +207,24 @@ export default function Sidebar({
     })
   }, [])
 
+  useEffect(() => {
+    listRef.current?.children[0].addEventListener('scroll', (e) => {
+      const header = document.querySelector('.sidebar-header')
+      if ((e.target as HTMLElement)?.scrollTop > 0) {
+        header?.classList?.add('shadow-sm')
+      } else {
+        header?.classList?.remove('shadow-sm')
+      }
+    })
+  }, [listRef])
+
   if (!isVisible) {
     return <></>
   }
 
   return (
     <aside style={{ width: `${width}px` }}>
+      <div className="sidebar-header"></div>
       {isSearchVisible && (
         <div className="search-bar-container">
           <div className="search-bar">
@@ -236,7 +246,7 @@ export default function Sidebar({
           height={listHeight}
           width="100%"
           itemCount={query ? filteredFiles.length : files.length}
-          itemSize={32}
+          itemSize={24}
         >
           {({ style, index }) => {
             const file = query ? filteredFiles[index] : files[index]
@@ -247,7 +257,7 @@ export default function Sidebar({
               isSelected: file.id === selectedFileId,
               id: file.id,
               previousId: (query ? filteredFiles[index - 1]?.id : files[index - 1]?.id) || null,
-              nextId: (query ? filteredFiles[index + 1]?.id : files[index]?.id + 1) || null,
+              nextId: (query ? filteredFiles[index + 1]?.id : files[index + 1]?.id) || null,
               onClick: () => {
                 setSelectedFileId(file.id)
                 setIsFocused(true)
@@ -255,16 +265,6 @@ export default function Sidebar({
             })
           }}
         </FixedSizeList>
-      </div>
-      <div className="sidebar-footer">
-        <button
-          type="button"
-          className="add-button"
-          onClick={onCreate}
-          aria-label={intl.formatMessage({ id: 'add' })}
-        >
-          <MaterialSymbol icon="add_circle" size={20} />
-        </button>
       </div>
     </aside>
   )

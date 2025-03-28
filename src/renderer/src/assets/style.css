@@ -1,6 +1,5 @@
 @import 'tailwindcss';
 
-main,
 a,
 button,
 input {
@@ -29,6 +28,7 @@ input {
 
 .cm-scroller {
   font-family: BlinkMacSystemFont, 'Segoe UI Symbol' !important;
+  @apply p-2 min-h-[calc(100vh-100px)] pb-[calc(100vh-100px)];
 }
 
 .cm-panels-bottom {
@@ -44,11 +44,11 @@ input {
 }
 
 main {
-  @apply text-[10pt] pt-0 flex grow bg-white;
+  @apply text-[10pt] pt-0 flex grow;
 }
 
 article {
-  @apply w-full h-[calc(100vh-30px)] overflow-y-scroll;
+  @apply w-full h-screen overflow-y-scroll;
 }
 
 .empty-page {
@@ -56,19 +56,16 @@ article {
 }
 
 .title-field {
-  @apply outline-none text-lg p-2 resize-none w-full;
+  @apply outline-none text-lg p-3 resize-none w-full font-semibold text-gray-800;
 }
 
 header {
-  @apply bg-gray-100 text-[10pt] flex items-center justify-center px-3 h-[30px] border-b border-[rgb(218,218,218)];
+  @apply bg-[rgb(245,245,245)] sticky top-0 z-10 text-[10pt] flex items-center px-3 h-[48px] shadow-sm justify-center text-gray-800;
+  -webkit-app-region: drag;
 }
 
 .editor {
-  @apply p-5;
-}
-
-.editor-bottom {
-  @apply w-full h-[calc(100vh-100px)];
+  @apply bg-[rgba(256,256,256)];
 }
 
 .setup-container {
@@ -92,12 +89,16 @@ header {
 }
 
 aside {
-  @apply bg-gray-100 select-none border-r border-[rgb(218,218,218)] max-w-none;
+  @apply select-none border-r border-[rgb(218,218,218)] max-w-none;
+}
+
+.sidebar-header {
+  @apply h-[48px];
+  -webkit-app-region: drag;
 }
 
 .file-list {
-  @apply h-[calc(100vh-74px)] relative;
-  @apply h-[calc(100vh-74px)] relative py-2;
+  @apply h-[calc(100vh-40px)] relative pb-2;
 }
 
 .search-bar-container {
@@ -105,7 +106,7 @@ aside {
 }
 
 .search-bar {
-  @apply bg-white border gap-1 border-gray-300 rounded-lg p-1 flex items-center;
+  @apply bg-[rgba(255,255,255,0.7)] border gap-1 border-gray-300 rounded-lg p-1 flex items-center;
 }
 
 .search-icon {
@@ -117,17 +118,30 @@ aside {
 }
 
 .sidebar-footer {
-  @apply sticky bottom-0 left-0 w-full p-2 text-left z-10 bg-gray-100 border-t border-gray-200;
+  @apply opacity-0 fixed bottom-0 right-0;
 }
 
 .add-button {
-  @apply rounded p-1 text-gray-500 flex items-center transition-all;
+  @apply absolute left-2 rounded p-2 text-gray-600 flex items-center transition-all hover:bg-[rgba(0,0,0,0.05)];
 }
 
 .file-item {
-  @apply h-full w-full block leading-[16px] text-left cursor-default rounded p-2 items-center overflow-hidden truncate;
+  @apply h-full w-full block leading-[16px] text-gray-800 text-left cursor-default rounded px-2 py-1 items-center overflow-hidden truncate;
 }
 
 .cm-completionIcon {
   @apply !hidden;
+}
+
+.cm-textfield {
+  @apply rounded;
+}
+
+.cm-button {
+  @apply !bg-white !border !border-gray-300 !rounded;
+  background-image: none !important;
+}
+
+input[type='checkbox'] {
+  @apply border !border-gray-300;
 }

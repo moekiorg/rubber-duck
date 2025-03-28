@@ -192,13 +192,11 @@ export default function Page(): JSX.Element {
 
   return (
     <>
-      <Header title={currentTitle || ''} />
       <main>
         <Sidebar
           files={files}
           isVisible={isSidebarVisible}
           filteredFiles={filteredFiles}
-          onCreate={() => handleCreate()}
           isSearchVisible={isSearchVisible}
           onChange={handleQueryChange}
           currentFile={currentFile}
@@ -206,6 +204,7 @@ export default function Page(): JSX.Element {
           query={query}
         />
         <article>
+          <Header title={currentTitle || ''} onCreate={() => handleCreate()} />
           {currentFile ? (
             <Editor
               currentFile={currentFile}

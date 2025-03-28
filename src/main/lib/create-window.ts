@@ -11,7 +11,12 @@ export const createWindow = (): BrowserWindow => {
     show: false,
     transparent: true,
     autoHideMenuBar: true,
+    frame: false,
     titleBarStyle: 'hidden',
+    trafficLightPosition: {
+      x: 16,
+      y: 16
+    },
     ...(process.platform === 'linux' ? { icon } : {}),
     webPreferences: {
       preload: join(__dirname, '../preload/index.cjs'),
