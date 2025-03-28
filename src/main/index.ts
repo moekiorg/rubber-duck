@@ -26,7 +26,7 @@ app.whenReady().then(() => {
   mainWindow = createWindow()
 
   mainWindow.setBackgroundMaterial('acrylic')
-  mainWindow.setVibrancy('under-window');
+  mainWindow.setVibrancy('under-window')
 
   app.on('browser-window-created', (_, window) => {
     optimizer.watchWindowShortcuts(window)
@@ -38,6 +38,9 @@ app.whenReady().then(() => {
   if (store.get('sidebar.visible') === undefined) {
     store.set('sidebar.visible', true)
     store.set('sidebar.width', 200)
+  }
+  if (store.get('linkAutoUpdate') === undefined) {
+    store.set('linkAutoUpdate', true)
   }
 
   ipcMain.on('show-context-menu', (event, id, title) => {
