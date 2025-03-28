@@ -18,6 +18,10 @@ input {
   -webkit-app-region: no-drag;
 }
 
+html {
+  @apply h-screen overflow-hidden;
+}
+
 .cm-focused {
   @apply !outline-none;
 }
@@ -163,7 +167,7 @@ input[type='checkbox'] {
 }
 
 .fts-nf {
-  @apply min-h-[calc(100vh-94px)];
+  @apply min-h-[calc(100vh-96x)];
 }
 
 .fts-rc {
@@ -179,7 +183,7 @@ input[type='checkbox'] {
 }
 
 .fts-result {
-  @apply min-h-[calc(100vh-94px)] px-5 py-2 divide-y divide-gray-300;
+  @apply min-h-[calc(100vh-96x)] px-5 py-2 divide-y divide-gray-300;
 }
 
 .fts-header {
