@@ -14,7 +14,7 @@ export default function Setup(): JSX.Element {
     <>
       <Header title="" />
       <div className="setup-container">
-        <div className="setup">
+        <div className="container">
           <button
             type="button"
             onClick={async () => {
@@ -25,7 +25,7 @@ export default function Setup(): JSX.Element {
           >
             <FormattedMessage id="openFolder" />
           </button>
-          <div className="open-file-shortcut">
+          <div className="shortcut">
             <div className="keyboard">⌘</div>
             <div className="keyboard">O</div>
           </div>
