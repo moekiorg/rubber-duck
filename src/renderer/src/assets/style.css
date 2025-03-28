@@ -28,7 +28,7 @@ input {
 
 .cm-scroller {
   font-family: BlinkMacSystemFont, 'Segoe UI Symbol' !important;
-  @apply p-2 min-h-[calc(100vh-100px)] pb-[calc(100vh-100px)];
+  @apply p-2 pt-0 min-h-[calc(100vh-100px)] pb-[calc(100vh-100px)];
 }
 
 .cm-panels-bottom {
@@ -56,7 +56,7 @@ article {
 }
 
 .title-field {
-  @apply outline-none text-lg p-3 pb-0 -mb-4 resize-none w-full font-semibold text-gray-800;
+  @apply outline-none text-lg p-3 pb-0 resize-none w-full font-semibold text-gray-800;
 }
 
 header {
