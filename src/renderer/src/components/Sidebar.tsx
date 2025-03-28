@@ -1,11 +1,11 @@
 import { NavLink } from 'react-router'
 import { File } from './Page'
-import { MaterialSymbol } from 'react-material-symbols'
-import { MouseEvent, useContext, useEffect, useRef, useState } from 'react'
+import { MouseEvent, useCallback, useContext, useEffect, useRef, useState } from 'react'
 import { FixedSizeList } from 'react-window'
 import { EditorContext } from '@renderer/contexts/editorContext'
 import { useIntl } from 'react-intl'
 import interact from 'interactjs'
+import scrollIntoView from 'scroll-into-view-if-needed'
 
 interface Props {
   files: Array<File>
@@ -50,7 +50,7 @@ const FileItem = ({
       <NavLink
         key={title}
         to={`/notes/${title}`}
-        state={{ title }}
+        state={{ title, force: true }}
         replace
         id={title}
         data-id={id}
@@ -94,6 +94,70 @@ export default function Sidebar({
     })
   }, [])
 
+  const updateSelection = useCallback(
+    (e): void => {
+      if (e.target.closest('input')) {
+        return
+      }
+      if (e.metaKey && e.key === '0') {
+        setIsFocused(true)
+        if (!selectedFileId) {
+          setSelectedFileId(currentId)
+        }
+      }
+      if (!isFocused) {
+        return
+      }
+      if (e.key === 'ArrowDown') {
+        const currentEl = document.querySelector<HTMLElement>(`[data-id="${selectedFileId}"]`)
+        const id = currentEl?.dataset.next
+        setSelectedFileId(
+          currentEl?.parentElement?.nextElementSibling ? id || null : selectedFileId
+        )
+        const el = document.querySelector<HTMLElement>(`[data-id="${id}"]`)!
+        try {
+          scrollIntoView(el, { behavior: 'smooth', scrollMode: 'if-needed' })
+        } catch (e) {
+          console.warn(e)
+        }
+        e.preventDefault()
+        if (editorRef?.current?.view?.hasFocus) {
+          setIsEditorVisible(false)
+          setTimeout(() => setIsEditorVisible(true), 1)
+        }
+      }
+      if (e.key === 'ArrowUp') {
+        const currentEl = document.querySelector<HTMLElement>(`[data-id="${selectedFileId}"]`)
+        const id = currentEl?.dataset.previous
+        setSelectedFileId(
+          currentEl?.parentElement?.previousElementSibling ? id || null : selectedFileId
+        )
+        if (!currentEl?.parentElement?.previousElementSibling) {
+          searchField.current?.focus()
+        }
+        const el = document.querySelector<HTMLElement>(`[data-id="${id}"]`)!
+        try {
+          scrollIntoView(el, { behavior: 'smooth', scrollMode: 'if-needed' })
+        } catch (e) {
+          console.warn(e)
+        }
+        e.preventDefault()
+        if (editorRef?.current?.view?.hasFocus) {
+          setIsEditorVisible(false)
+          setTimeout(() => setIsEditorVisible(true), 1)
+        }
+      }
+      if (e.metaKey && e.key === '1') {
+        setIsFocused(false)
+      }
+      if (e.key === ' ') {
+        e.preventDefault()
+        document.querySelector<HTMLElement>(`[data-id="${selectedFileId}"]`)?.click()
+      }
+    },
+    [currentId, editorRef, isFocused, selectedFileId, setIsEditorVisible]
+  )
+
   useEffect(() => {
     setTimeout(() => {
       setListHeight(
@@ -116,64 +180,6 @@ export default function Sidebar({
       setIsFocused(false)
     }
 
-    const updateSelection = (e): void => {
-      if (e.metaKey && e.key === '0') {
-        setIsFocused(true)
-        if (!selectedFileId) {
-          setSelectedFileId(currentId)
-        }
-      }
-      if (!isFocused) {
-        return
-      }
-      if (e.key === 'ArrowDown') {
-        const currentEl = document.querySelector<HTMLElement>(`[data-id="${selectedFileId}"]`)
-        const id = currentEl?.dataset.next
-        setSelectedFileId(
-          currentEl?.parentElement?.nextElementSibling ? id || null : selectedFileId
-        )
-        const el = document.querySelector<HTMLElement>(`[data-id="${id}"]`)
-        const rect = el?.getBoundingClientRect()
-        const height = listRef.current?.children[0].clientHeight
-        if (rect && height) {
-          if (rect.top > height) {
-            el?.scrollIntoView({ behavior: 'smooth', block: 'nearest' })
-          }
-        }
-        e.preventDefault()
-        if (editorRef?.current?.view?.hasFocus) {
-          setIsEditorVisible(false)
-          setTimeout(() => setIsEditorVisible(true), 1)
-        }
-      }
-      if (e.key === 'ArrowUp') {
-        const currentEl = document.querySelector<HTMLElement>(`[data-id="${selectedFileId}"]`)
-        const id = currentEl?.dataset.previous
-        setSelectedFileId(
-          currentEl?.parentElement?.previousElementSibling ? id || null : selectedFileId
-        )
-        const el = document.querySelector<HTMLElement>(`[data-id="${id}"]`)
-        const rect = el?.getBoundingClientRect()
-        if (rect) {
-          if (rect.top < 10) {
-            el?.scrollIntoView({ behavior: 'smooth', block: 'nearest' })
-          }
-        }
-        e.preventDefault()
-        if (editorRef?.current?.view?.hasFocus) {
-          setIsEditorVisible(false)
-          setTimeout(() => setIsEditorVisible(true), 1)
-        }
-      }
-      if (e.metaKey && e.key === '1') {
-        setIsFocused(false)
-      }
-      if (e.key === ' ') {
-        e.preventDefault()
-        document.querySelector<HTMLElement>(`[data-id="${selectedFileId}"]`)?.click()
-      }
-    }
-
     window.addEventListener('click', updateFocus)
     window.addEventListener('keydown', updateSelection)
 
@@ -182,7 +188,15 @@ export default function Sidebar({
       window.removeEventListener('keydown', updateSelection)
       window.removeEventListener('resize', handleResize)
     }
-  }, [currentId, editorRef, isFocused, selectedFileId, setIsEditorVisible])
+  }, [
+    currentId,
+    editorRef,
+    isFocused,
+    isSearchVisible,
+    selectedFileId,
+    setIsEditorVisible,
+    updateSelection
+  ])
 
   useEffect(() => {
     interact('aside').resizable({
@@ -227,18 +241,31 @@ export default function Sidebar({
       <div className="sidebar-header"></div>
       {isSearchVisible && (
         <div className="search-bar-container">
-          <div className="search-bar">
-            <MaterialSymbol icon="search" size={20} className="search-icon" />
-            <input
-              value={query || ''}
-              type="text"
-              ref={searchField}
-              placeholder={intl.formatMessage({ id: 'search' })}
-              autoFocus
-              onChange={(e) => onChange(e.target.value)}
-              className="search-field"
-            />
-          </div>
+          <input
+            value={query || ''}
+            type="text"
+            ref={searchField}
+            placeholder={intl.formatMessage({ id: 'search' })}
+            autoFocus
+            onChange={(e) => onChange(e.target.value)}
+            className="search-field"
+            onKeyDown={(e) => {
+              if (isFocused) {
+                return
+              }
+              if (e.key === 'ArrowDown') {
+                const firstItem = listRef.current!.children[0]!.children[0].children[0]!
+                  .children[0]! as HTMLDivElement
+                setSelectedFileId(firstItem.dataset.id as string)
+                setIsFocused(true)
+                ;(e.target as HTMLInputElement).blur()
+                e.preventDefault()
+              }
+            }}
+            onFocusCapture={() => {
+              setIsFocused(false)
+            }}
+          />
         </div>
       )}
       <div ref={listRef} className="file-list">

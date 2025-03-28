@@ -109,16 +109,12 @@ aside {
   @apply p-3 pb-2;
 }
 
-.search-bar {
-  @apply bg-[rgba(255,255,255,0.7)] border gap-1 border-gray-300 rounded-lg p-1 flex items-center;
-}
-
 .search-icon {
   @apply text-gray-600;
 }
 
 .search-field {
-  @apply outline-none;
+  @apply outline-none bg-[rgba(255,255,255,0.7)] border gap-1 border-gray-300 rounded-lg p-1 flex items-center w-full;
 }
 
 .sidebar-footer {
@@ -179,7 +175,7 @@ input[type='checkbox'] {
 }
 
 .fts-line {
-  @apply text-gray-800 cursor-default block p-1;
+  @apply text-gray-800 cursor-default block p-2 rounded;
 }
 
 .fts-result {
@@ -192,4 +188,8 @@ input[type='checkbox'] {
 
 .fts-field {
   @apply rounded-lg bg-white px-2 py-1 w-full border border-gray-300;
+}
+
+.fts-line--active {
+  @apply bg-gray-100;
 }
