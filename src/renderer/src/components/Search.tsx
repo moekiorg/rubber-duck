@@ -3,6 +3,8 @@ import { NavLink } from 'react-router'
 import { useDebouncedCallback } from 'use-debounce'
 import parse from 'html-react-parser'
 import { FormattedMessage, useIntl } from 'react-intl'
+import sum from 'lodash/sum'
+import scrollIntoView from 'scroll-into-view-if-needed'
 
 type Line = {
   num: number
@@ -27,6 +29,7 @@ export function Search({
   const [currentHistoryIndex, setCurrentHistoryindex] = useState<number>(0)
   const intl = useIntl()
   const [isNotFound, setIsNotFound] = useState(false)
+  const [currentSelectedResult, setCurrentSelectedResult] = useState(-1)
 
   const handleSearch = useDebouncedCallback(async (e): Promise<void> => {
     if (e.target.value === '') {
@@ -47,7 +50,36 @@ export function Search({
   }
 
   return (
-    <div className="fts">
+    <div
+      className="fts"
+      onKeyDown={(e) => {
+        if (
+          e.key === 'ArrowDown' &&
+          currentHistoryIndex === 0 &&
+          currentSelectedResult < sum(results.map((result) => result.lines.length)) - 1
+        ) {
+          setCurrentSelectedResult(currentSelectedResult + 1)
+          const el = document.querySelector(`#result-${currentSelectedResult + 1}`)!
+          try {
+            scrollIntoView(el, { behavior: 'smooth', scrollMode: 'if-needed' })
+          } catch (e) {
+            console.warn(e)
+          }
+        }
+        if (e.key === 'ArrowUp' && currentSelectedResult > -1) {
+          setCurrentSelectedResult(currentSelectedResult - 1)
+          const el = document.querySelector(`#result-${currentSelectedResult - 1}`)!
+          try {
+            scrollIntoView(el, { behavior: 'smooth', scrollMode: 'if-needed' })
+          } catch (e) {
+            console.warn(e)
+          }
+        }
+        if (e.key === 'Enter' || (e.key === ' ' && currentSelectedResult > 0)) {
+          document.querySelector<HTMLAnchorElement>(`#result-${currentSelectedResult}`)!.click()
+        }
+      }}
+    >
       <div className="fts-header">
         <input
           className="fts-field"
@@ -58,16 +90,23 @@ export function Search({
           }}
           placeholder={intl.formatMessage({ id: 'searchFullTextPlaceHolder' })}
           onKeyDown={(e) => {
-            if (e.key === 'Enter') {
+            if (e.key === 'Escape') {
+              ;(e.target as HTMLInputElement).blur()
+            }
+            if (e.key === 'Enter' && currentSelectedResult === -1) {
               handleSearch(e)
               setHistory([query, ...history])
             }
-            if (e.key === 'ArrowUp' && currentHistoryIndex < history.length - 1) {
+            if (
+              e.key === 'ArrowUp' &&
+              currentHistoryIndex < history.length - 1 &&
+              currentSelectedResult === -1
+            ) {
               e.preventDefault()
               setQuery(history[currentHistoryIndex + 1])
               setCurrentHistoryindex(currentHistoryIndex + 1)
             }
-            if (e.key === 'ArrowDown' && currentHistoryIndex > 0) {
+            if (e.key === 'ArrowDown' && currentHistoryIndex > 0 && currentSelectedResult === -1) {
               e.preventDefault()
               setQuery(history[currentHistoryIndex - 1])
               setCurrentHistoryindex(currentHistoryIndex - 1)
@@ -83,7 +122,7 @@ export function Search({
           </div>
         ) : (
           <>
-            {results.map((result) => (
+            {results.map((result, index) => (
               <div key={result.title} className="fts-rc">
                 <NavLink
                   to={`/notes/${result.title}`}
@@ -94,12 +133,16 @@ export function Search({
                   {result.title}
                 </NavLink>
                 <div>
-                  {result.lines.map((line, index) => (
+                  {result.lines.map((line, lineIndex) => (
                     <NavLink
                       to={`/notes/${result.title}`}
+                      id={`result-${
+                        sum(results.slice(0, index).map((result) => result.lines.length)) +
+                        lineIndex
+                      }`}
                       state={{ title: result.title, line: line.num }}
-                      key={result.title + index}
-                      className="fts-line"
+                      key={result.title + lineIndex}
+                      className={`fts-line ${sum(results.slice(0, index).map((result) => result.lines.length)) + lineIndex === currentSelectedResult ? 'fts-line--active' : ''}`}
                       onClick={() => setIsSearchMode(false)}
                     >
                       {parse(line.text)}

@@ -1,5 +1,4 @@
 import { useCallback, useContext, useEffect, useRef, useState } from 'react'
-import 'react-material-symbols/rounded'
 import { useLocation, useNavigate } from 'react-router'
 import Sidebar from './Sidebar'
 import Header from './Header'
@@ -216,6 +215,12 @@ export default function Page(): JSX.Element {
     const f = files.find((f) => f.id === currentFile.id)!
     setFiles([f, ...files.filter((f) => f.id !== currentFile.id)])
   }
+
+  useEffect(() => {
+    if (location.state?.force) {
+      setIsSearchMode(false)
+    }
+  }, [location])
 
   return (
     <>
