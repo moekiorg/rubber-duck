@@ -25,6 +25,9 @@ app.whenReady().then(() => {
 
   mainWindow = createWindow()
 
+  mainWindow.setBackgroundMaterial('acrylic')
+  mainWindow.setVibrancy('under-window');
+
   app.on('browser-window-created', (_, window) => {
     optimizer.watchWindowShortcuts(window)
   })
