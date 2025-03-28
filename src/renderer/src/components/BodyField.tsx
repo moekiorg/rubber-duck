@@ -7,9 +7,8 @@ import { hyperLink } from '@renderer/lib/hyper-link-plugin'
 import { internalLinkCompletion } from '@renderer/lib/internal-link-completion'
 import { internalLink } from '@renderer/lib/internal-link-plugin'
 import { markdownImagePlugin } from '@renderer/lib/markdown-image-plugin'
-import CodeMirror, { EditorState, EditorView } from '@uiw/react-codemirror'
+import CodeMirror, { EditorView } from '@uiw/react-codemirror'
 import { KeyboardEventHandler, useCallback, useContext, useEffect } from 'react'
-import { useIntl } from 'react-intl'
 
 interface Props {
   value: string
@@ -21,7 +20,6 @@ window.EditContext = false
 
 export default function BodyField({ value, onChange, onKeyDownCapture }: Props): JSX.Element {
   const { ref: editorRef, isVisible, setIsVisible } = useContext(EditorContext)
-  const intl = useIntl()
 
   useEffect(() => {
     const handleKeyDown = (e): void => {
@@ -97,23 +95,6 @@ export default function BodyField({ value, onChange, onKeyDownCapture }: Props):
         }),
         EditorView.domEventHandlers({
           drop: handleFileDrop
-        }),
-        EditorState.phrases.of({
-          Find: intl.formatMessage({ id: 'find' }),
-          Replace: intl.formatMessage({ id: 'replace' }),
-          next: intl.formatMessage({ id: 'next' }),
-          previous: intl.formatMessage({ id: 'previous' }),
-          all: intl.formatMessage({ id: 'all' }),
-          'match case': intl.formatMessage({ id: 'match case' }),
-          'by word': intl.formatMessage({ id: 'by word' }),
-          replace: intl.formatMessage({ id: 'replace' }),
-          regexp: intl.formatMessage({ id: 'regexp' }),
-          'replace all': intl.formatMessage({ id: 'replace all' }),
-          close: intl.formatMessage({ id: 'close' }),
-          'current match': 'aktueller Treffer',
-          'replaced $ matches': '$ Treffer ersetzt',
-          'replaced match on line $': 'Treffer on Zeile $ ersetzt',
-          'on line': 'auf Zeile'
         })
       ]}
       onChange={onChange}

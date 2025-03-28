@@ -5,6 +5,7 @@ import Sidebar from './Sidebar'
 import Header from './Header'
 import Fuse from 'fuse.js'
 import Editor from './Editor'
+import { FormattedMessage } from 'react-intl'
 
 export interface File {
   id: string
@@ -216,7 +217,17 @@ export default function Page(): JSX.Element {
               titleEditor={titleEditor}
             />
           ) : (
-            <div className="empty-page"></div>
+            <div className="empty-page">
+              <div className="container">
+                <button type="button" onClick={() => handleCreate()} className="new-file-button">
+                  <FormattedMessage id="add" />
+                </button>
+                <div className="shortcut">
+                  <div className="keyboard">⌘</div>
+                  <div className="keyboard">N</div>
+                </div>
+              </div>
+            </div>
           )}
         </article>
       </main>

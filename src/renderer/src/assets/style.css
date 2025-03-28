@@ -52,11 +52,11 @@ article {
 }
 
 .empty-page {
-  @apply w-full h-full grow bg-gray-50;
+  @apply w-full grow bg-[rgb(235,235,235)]  p-20 flex text-[10pt] items-center justify-center h-[calc(100vh-30px)];
 }
 
 .title-field {
-  @apply outline-none text-lg p-3 resize-none w-full font-semibold text-gray-800;
+  @apply outline-none text-lg p-3 pb-0 -mb-4 resize-none w-full font-semibold text-gray-800;
 }
 
 header {
@@ -72,15 +72,15 @@ header {
   @apply bg-white p-20 flex text-[10pt] items-center justify-center h-[calc(100vh-30px)];
 }
 
-.setup {
-  @apply flex gap-2 items-center text-gray-500;
+.container {
+  @apply flex gap-2 items-center text-gray-500 justify-center;
 }
 
 .open-file-button {
-  @apply hover:bg-gray-50 rounded py-1 px-2;
+  @apply hover:bg-gray-50 rounded py-1 px-2 transition-all;
 }
 
-.open-file-shortcut {
+.shortcut {
   @apply flex gap-1 items-center;
 }
 
@@ -102,7 +102,7 @@ aside {
 }
 
 .search-bar-container {
-  @apply p-3 pb-0;
+  @apply p-3 pb-2;
 }
 
 .search-bar {
@@ -144,4 +144,8 @@ aside {
 
 input[type='checkbox'] {
   @apply border !border-gray-300;
+}
+
+.new-file-button {
+  @apply hover:bg-[rgb(230,230,230)] rounded py-1 px-2 transition-all;
 }
