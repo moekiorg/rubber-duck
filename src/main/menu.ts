@@ -33,6 +33,11 @@ const template = [
       },
       { type: 'separator' },
       { click: handleSearch, label: intl.formatMessage({ id: 'search' }), accelerator: 'Cmd+P' },
+      {
+        click: (): void => mainWindow?.webContents.send('toggle-search-full-text'),
+        label: intl.formatMessage({ id: 'searchFullText' }),
+        accelerator: 'Cmd+Shift+F'
+      },
       { type: 'separator' },
       { role: 'close', label: intl.formatMessage({ id: 'close' }) }
     ]

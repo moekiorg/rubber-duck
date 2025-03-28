@@ -1,12 +1,14 @@
 import { useIntl } from 'react-intl'
-import { CiCirclePlus } from 'react-icons/ci'
+import { CiCirclePlus, CiSearch } from 'react-icons/ci'
 
 export default function Header({
   title,
-  onCreate
+  onCreate,
+  onToggleSearchMode
 }: {
   title: string
   onCreate?: () => void
+  onToggleSearchMode?: () => void
 }): JSX.Element {
   const intl = useIntl()
 
@@ -25,7 +27,16 @@ export default function Header({
 
       <h1>{title}</h1>
 
-      <div></div>
+      {onToggleSearchMode && (
+        <button
+          type="button"
+          className="search-button"
+          onClick={onToggleSearchMode}
+          aria-label={intl.formatMessage({ id: 'searchFullText' })}
+        >
+          <CiSearch size={20} />
+        </button>
+      )}
     </header>
   )
 }

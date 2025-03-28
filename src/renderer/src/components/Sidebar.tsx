@@ -98,13 +98,13 @@ export default function Sidebar({
     setTimeout(() => {
       setListHeight(
         listRef.current?.getBoundingClientRect().height
-          ? listRef.current?.getBoundingClientRect().height - 20
+          ? listRef.current?.getBoundingClientRect().height - (isSearchVisible ? 80 : 20)
           : 0
       )
     }, 5)
 
     const handleResize = (): void => {
-      setListHeight(listRef.current!.getBoundingClientRect().height - 20)
+      setListHeight(listRef.current!.getBoundingClientRect().height - (isSearchVisible ? 80 : 20))
     }
 
     window.addEventListener('resize', handleResize)

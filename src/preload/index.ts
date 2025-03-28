@@ -1,6 +1,7 @@
 import { contextBridge, ipcRenderer } from 'electron'
 import { electronAPI } from '@electron-toolkit/preload'
 import { File as FileType } from './file'
+import { SearchResult } from '../main/lib/search'
 
 const api = {
   openFile: (): Promise<void> => ipcRenderer.invoke('dialog:openDir'),
@@ -27,7 +28,9 @@ const api = {
       reader.onerror = reject
       reader.readAsArrayBuffer(file)
     })
-  }
+  },
+  searchFullText: (query: string): Promise<Array<SearchResult>> =>
+    ipcRenderer.invoke('searchFullText', query)
 }
 
 // Use `contextBridge` APIs to expose Electron APIs to
