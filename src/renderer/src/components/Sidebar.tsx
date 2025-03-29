@@ -85,6 +85,14 @@ export default function Sidebar({
   const [width, setWidth] = useState(300)
 
   useEffect(() => {
+    window.addEventListener('keydown', (e) => {
+      if (e.key === 'n' && e.metaKey) {
+        setIsFocused(false)
+      }
+    })
+  })
+
+  useEffect(() => {
     window.api.getConfig('sidebar.width').then((value) => {
       setWidth(Number(value))
     })
