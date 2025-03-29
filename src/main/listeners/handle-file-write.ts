@@ -1,7 +1,7 @@
 import { join } from 'path'
 import { store } from '../lib/store'
 import { promises, readdirSync, statSync } from 'fs'
-import { replaceInFileSync } from 'replace-in-file'
+import { replaceLinks } from '../lib/replace-links'
 
 export const handleFileWrite = async (
   _: Electron.IpcMainInvokeEvent,
@@ -29,11 +29,11 @@ export const handleFileWrite = async (
 
   if (newFilePath !== oldFilePath) {
     await promises.rename(oldFilePath, newFilePath)
-    if (store.get('linkAutoUpdate')) {
-      replaceInFileSync({
-        files: join(dirPath, '*.md'),
-        from: new RegExp(`\\[\\[${targetFile!.filename.replace('.md', '')}\\]\\]`, 'g'),
-        to: `[[${filename}]]`
+    if (store.get('edit.linkAutoUpdate')) {
+      replaceLinks({
+        dirPath,
+        oldTitle: targetFile!.filename.replace('.md', ''),
+        newTitle: filename
       })
     }
   }

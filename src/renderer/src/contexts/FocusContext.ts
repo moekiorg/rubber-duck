@@ -5,13 +5,11 @@ export type FocusTarget = 'fileList' | 'editor' | 'fullTextSearch' | 'fileSearch
 interface ContextType {
   focus: FocusTarget
   setFocus: Dispatch<SetStateAction<FocusTarget>>
-  isFileSearchVisible: boolean
-  toggleFileSearchVisible: () => void
+  toggleFocus: (value: FocusTarget) => void
 }
 
 export const FocusContext = createContext<ContextType>({
   focus: 'fileList',
   setFocus: () => {},
-  isFileSearchVisible: false,
-  toggleFileSearchVisible: () => {}
+  toggleFocus: () => {}
 })

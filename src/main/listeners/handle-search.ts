@@ -1,5 +1,5 @@
 import { mainWindow } from '..'
 
-export const handleSearch = async (): Promise<void> => {
-  mainWindow?.webContents.send('search')
+export const handleSearchFile = async (): Promise<void> => {
+  mainWindow?.webContents.send('search-file')
 }

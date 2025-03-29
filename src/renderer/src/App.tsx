@@ -14,11 +14,14 @@ export default function App(): JSX.Element {
   const [isEditorVisible, setIsEditorVisible] = useState(true)
   const [focus, setFocus] = useState<FocusTarget>('fileList')
   const [currentListItem, setCurrentListItem] = useState<string | null>(null)
-  const [isFileSearchVisible, setIsFileSearchVisible] = useState(false)
   const [current, setCurrent] = useState<string | null>(null)
 
-  const toggleFileSearchVisible = (): void => {
-    setIsFileSearchVisible(!isFileSearchVisible)
+  const toggleFocus = (value): void => {
+    if (value === focus) {
+      setFocus('editor')
+    } else {
+      setFocus(value)
+    }
   }
 
   return (
@@ -37,8 +40,7 @@ export default function App(): JSX.Element {
           value={{
             focus,
             setFocus,
-            isFileSearchVisible,
-            toggleFileSearchVisible
+            toggleFocus
           }}
         >
           <FileListContext.Provider

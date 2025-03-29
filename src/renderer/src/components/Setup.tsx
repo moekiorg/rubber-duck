@@ -1,5 +1,4 @@
 import { useEffect } from 'react'
-import Header from './Header'
 import { useNavigate } from 'react-router'
 import { FormattedMessage } from 'react-intl'
 
@@ -12,7 +11,6 @@ export default function Setup(): JSX.Element {
 
   return (
     <>
-      <Header title="" />
       <div className="setup-container">
         <div className="container">
           <button

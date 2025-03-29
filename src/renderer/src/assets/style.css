@@ -68,7 +68,7 @@ article {
 }
 
 header {
-  @apply bg-[rgb(245,245,245)] sticky top-0 z-10 text-[10pt] flex items-center px-3 h-[48px] shadow-sm justify-between text-gray-800;
+  @apply bg-[rgb(245,245,245)] sticky justify-end top-0 z-10 text-[10pt] flex items-center px-3 h-[48px] shadow-sm  text-gray-800;
   -webkit-app-region: drag;
 }
 
@@ -85,7 +85,7 @@ header {
 }
 
 .t-button {
-  @apply hover:bg-gray-50 rounded py-1 px-2 transition-all;
+  @apply hover:bg-[rgba(0,0,0,0.05)] rounded py-1 px-2 transition-all;
 }
 
 .shortcut {
@@ -109,20 +109,44 @@ aside {
   @apply h-[calc(100vh-40px)] relative pb-2;
 }
 
+.fi {
+  @apply h-full w-full block leading-[16px] text-gray-800 text-left cursor-default rounded px-2 py-1 items-center overflow-hidden truncate;
+}
+
+.fi--active {
+  @apply bg-[rgba(0,0,0,0.05)];
+}
+
 .fs-c {
-  @apply p-2 pt-0;
+  @apply fixed top-4 left-1/2 -translate-x-1/2 bg-[rgb(240,240,240)] z-20 shadow-lg rounded max-w-[500px] w-full border border-gray-300;
+}
+
+.fs-f-w {
+  @apply p-2;
 }
 
 .fs-f {
-  @apply bg-[rgba(255,255,255,0.7)] border gap-1 border-gray-300 rounded-lg p-1 flex items-center w-full;
+  @apply bg-[rgba(255,255,255,0.7)] border gap-1 border-gray-300 rounded p-1 flex items-center w-full;
 }
 
 .i-button {
-  @apply rounded p-2 text-gray-600 flex items-center transition-all hover:bg-[rgba(0,0,0,0.05)];
+  @apply rounded p-2 text-gray-500 flex items-center transition-all hover:bg-[rgba(0,0,0,0.05)];
+}
+
+.fs-l {
+  @apply gap-1 pb-2 max-h-[300px] overflow-scroll;
+}
+
+.fs-i-w {
+  @apply px-2;
 }
 
 .fs-i {
-  @apply h-full w-full block leading-[16px] text-gray-800 text-left cursor-default rounded px-2 py-1 items-center overflow-hidden truncate;
+  @apply p-1 block;
+}
+
+.fs-i {
+  @apply p-1 block;
 }
 
 .fs-i--active {

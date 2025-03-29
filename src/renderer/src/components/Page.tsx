@@ -2,12 +2,12 @@ import { useCallback, useContext, useEffect, useState } from 'react'
 import { useLocation, useNavigate } from 'react-router'
 import Sidebar from './Sidebar'
 import Header from './Header'
-import Fuse from 'fuse.js'
 import Editor from './Editor'
 import { FormattedMessage } from 'react-intl'
-import { Search } from './Search'
+import { FullTextSearch } from './FullTextSearch'
 import { EditorContext } from '@renderer/contexts/editorContext'
 import { FocusContext } from '@renderer/contexts/FocusContext'
+import FileSearch from './FileSearch'
 
 export interface File {
   id: string
@@ -22,12 +22,10 @@ export default function Page(): JSX.Element {
   const navigate = useNavigate()
   const [currentFile, setCurrentFile] = useState<File | null>(null)
   const [currentTitle, setCurrentTitle] = useState<string | null>(null)
-  const [filteredFiles, setFilteredFiles] = useState<Array<File>>([])
-  const [query, setQuery] = useState('')
   const [isSidebarVisible, setIsSidebarVisible] = useState(false)
   const [isDeleted, setIsDeleted] = useState(false)
   const { titleEditor, bodyEditor, current, setCurrent } = useContext(EditorContext)
-  const { focus, setFocus, isFileSearchVisible, toggleFileSearchVisible } = useContext(FocusContext)
+  const { focus, setFocus, toggleFocus } = useContext(FocusContext)
 
   useEffect(() => {
     if (location.state?.line) {
@@ -56,20 +54,14 @@ export default function Page(): JSX.Element {
   }, [focus, setFocus])
 
   useEffect(() => {
-    window.api.getConfig('sidebar.visible').then((value) => {
+    window.api.getConfig('view.sidebar.visible').then((value) => {
       setIsSidebarVisible(Boolean(value))
     })
     window.electron.ipcRenderer.on('toggle-sidebar', async () => {
-      const value = await window.api.getConfig('sidebar.visible')
+      const value = await window.api.getConfig('view.sidebar.visible')
       setIsSidebarVisible(Boolean(value))
     })
   }, [])
-
-  useEffect(() => {
-    if (isFileSearchVisible) {
-      setIsSidebarVisible(true)
-    }
-  }, [isFileSearchVisible, setIsSidebarVisible, isSidebarVisible])
 
   const handleCreate = useCallback(
     async (t = null): Promise<void> => {
@@ -89,8 +81,9 @@ export default function Page(): JSX.Element {
         state: { title: result.title }
       })
       setTimeout(() => titleEditor?.current?.select(), 50)
+      setFocus('editor')
     },
-    [files, navigate, titleEditor]
+    [files, navigate, setFocus, titleEditor]
   )
 
   useEffect(() => {
@@ -156,24 +149,6 @@ export default function Page(): JSX.Element {
     })
   }, [location.state, navigate])
 
-  const handleQueryChange = (q): void => {
-    setQuery(q)
-    if (q === '') {
-      setFilteredFiles(allFiles)
-      return
-    }
-    const fuse = new Fuse(allFiles, { keys: ['title'] })
-    setFilteredFiles(fuse.search(q).map((res) => res.item))
-  }
-
-  const toggleSearchSection = useCallback((): void => {
-    toggleFileSearchVisible()
-
-    if (isFileSearchVisible) {
-      setQuery('')
-    }
-  }, [isFileSearchVisible, toggleFileSearchVisible])
-
   useEffect(() => {
     init()
 
@@ -185,12 +160,14 @@ export default function Page(): JSX.Element {
   }, [init])
 
   useEffect(() => {
-    window.electron.ipcRenderer.on('search', toggleSearchSection)
+    window.electron.ipcRenderer.on('search-file', () => {
+      toggleFocus('fileSearch')
+    })
 
     return (): void => {
-      window.electron.ipcRenderer.removeAllListeners('search')
+      window.electron.ipcRenderer.removeAllListeners('search-file')
     }
-  }, [toggleSearchSection])
+  }, [focus, setFocus, toggleFocus])
 
   useEffect(() => {
     window.electron.ipcRenderer.on('new', () => {
@@ -227,19 +204,11 @@ export default function Page(): JSX.Element {
   return (
     <>
       <main>
-        <Sidebar
-          files={files}
-          isVisible={isSidebarVisible}
-          filteredFiles={filteredFiles}
-          onChange={handleQueryChange}
-          query={query}
-        />
+        <Sidebar files={files} isVisible={isSidebarVisible} />
         <article>
-          <Header
-            title={focus === 'fullTextSearch' ? '' : currentTitle || ''}
-            onCreate={() => handleCreate()}
-          />
-          <Search></Search>
+          <Header onCreate={() => handleCreate()} />
+          <FileSearch files={files}></FileSearch>
+          <FullTextSearch></FullTextSearch>
           {focus !== 'fullTextSearch' && (
             <>
               {currentFile ? (
@@ -254,11 +223,7 @@ export default function Page(): JSX.Element {
               ) : (
                 <div className="ep">
                   <div className="container">
-                    <button
-                      type="button"
-                      onClick={() => handleCreate()}
-                      className="new-file-button"
-                    >
+                    <button type="button" onClick={() => handleCreate()} className="t-button">
                       <FormattedMessage id="add" />
                     </button>
                     <div className="shortcut">

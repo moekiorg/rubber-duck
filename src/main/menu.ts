@@ -1,6 +1,6 @@
 import { Menu, shell } from 'electron'
 import { handleDirOpen } from './listeners/handle-dir-open'
-import { handleSearch } from './listeners/handle-search'
+import { handleSearchFile } from './listeners/handle-search'
 import { mainWindow } from '.'
 import { store } from './lib/store'
 import { intl } from './lib/intl'
@@ -32,8 +32,13 @@ const template = [
         accelerator: 'Cmd+N'
       },
       { type: 'separator' },
-      { click: handleSearch, label: intl.formatMessage({ id: 'search' }), accelerator: 'Cmd+P' },
       {
+        click: handleSearchFile,
+        label: intl.formatMessage({ id: 'search' }),
+        accelerator: 'Cmd+P'
+      },
+      {
+        id: 'toggle-search-full-text',
         click: (): void => mainWindow?.webContents.send('toggle-search-full-text'),
         label: intl.formatMessage({ id: 'searchFullText' }),
         accelerator: 'Cmd+Shift+F'
@@ -66,12 +71,12 @@ const template = [
     submenu: [
       {
         click: (): void => {
-          store.set('sidebar.visible', !store.get('sidebar.visible'))
-          mainWindow?.webContents.send('toggle-sidebar', store.get('sidebar.visible'))
+          store.set('view.sidebar.visible', !store.get('view.sidebar.visible'))
+          mainWindow?.webContents.send('toggle-sidebar', store.get('view.sidebar.visible'))
         },
         label: intl.formatMessage({ id: 'sidebar' }),
         accelerator: 'Cmd+B',
-        checked: await store.get('sidebar.visible')
+        checked: await store.get('view.sidebar.visible')
       },
       { type: 'separator' },
       { role: 'zoomIn', label: intl.formatMessage({ id: 'zoomIn' }) },

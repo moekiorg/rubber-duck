@@ -43,11 +43,9 @@ test.afterAll(async () => {
 
 test('シナリオ', async () => {
   await page.locator('[aria-label="新規作成"]').click()
-  await expect(page.getByRole('heading', { name: 'Untitled', exact: true })).toBeVisible()
   await expect(page.getByRole('link', { name: 'Untitled', exact: true })).toBeVisible()
   await page.waitForTimeout(1000)
   await page.keyboard.insertText('New Title')
-  await expect(page.getByRole('heading', { name: 'New Title', exact: true })).toBeVisible()
   await expect(page.getByRole('link', { name: 'New Title', exact: true })).toBeVisible()
   await page.locator('.cm-scroller').click()
   await page.keyboard.down('[')
@@ -96,4 +94,11 @@ test('全文検索ができること', async () => {
   await page.keyboard.insertText('Example Image')
   await page.keyboard.press('Enter')
   await expect(page.locator('.fts-line')).toBeVisible()
+})
+
+test('ファイル検索ができること', async () => {
+  await page.locator('[aria-label="ファイル検索"]').click()
+  await page.locator('input').focus()
+  await page.keyboard.insertText('Example')
+  await expect(page.locator('.fs-i').first()).toBeVisible()
 })
