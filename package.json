@@ -1,6 +1,6 @@
 {
   "name": "text-zen",
-  "version": "1.0.0",
+  "version": "0.1.0",
   "description": "A Markdown editor application",
   "main": "./out/main/index.js",
   "author": "hi@moeki.org",
@@ -16,10 +16,7 @@
     "dev": "electron-vite dev",
     "build": "npm run typecheck && electron-vite build",
     "postinstall": "electron-builder install-app-deps",
-    "build:unpack": "npm run build && electron-builder --dir",
-    "build:win": "npm run build && electron-builder --win",
-    "build:mac": "electron-vite build && electron-builder --mac",
-    "build:linux": "electron-vite build && electron-builder --linux"
+    "build:mac": "electron-vite build && electron-builder --mac"
   },
   "dependencies": {
     "@codemirror/lang-markdown": "^6.3.2",
@@ -37,6 +34,7 @@
     "@vscode/ripgrep": "^1.15.11",
     "chokidar": "^4.0.3",
     "codemirror": "^6.0.1",
+    "dotenv": "^16.4.7",
     "electron-store": "^10.0.1",
     "execa": "^9.5.2",
     "fuse.js": "^7.1.0",
@@ -67,7 +65,8 @@
     "@types/react-dom": "^18.3.5",
     "@vitejs/plugin-react": "^4.3.4",
     "electron": "^34.2.0",
-    "electron-builder": "^25.1.8",
+    "electron-builder": "^26.0.12",
+    "electron-notarize": "^1.2.2",
     "electron-playwright-helpers": "^1.7.1",
     "electron-vite": "^3.0.0",
     "eslint": "^9.20.1",
