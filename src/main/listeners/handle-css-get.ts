@@ -7,7 +7,7 @@ export const handleCssGet = async (): Promise<Array<string>> => {
     const dirPath = store.get('general.path') as string
     return readdirSync(join(dirPath, '.text-zen'))
       .filter((file) => file.endsWith('.css'))
-      .map((file) => `app://${join(dirPath, '.text-zen', file)}`)
+      .map((file) => `zen-file://${join(dirPath, '.text-zen', file)}`)
   } catch {
     return []
   }

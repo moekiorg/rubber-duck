@@ -24,6 +24,9 @@ export const createWindow = (): BrowserWindow => {
     }
   })
 
+  mainWindow.setBackgroundMaterial('acrylic')
+  mainWindow.setVibrancy('under-window')
+
   mainWindow.on('ready-to-show', () => {
     mainWindow.show()
   })

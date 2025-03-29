@@ -119,7 +119,7 @@ export default function FileSearch({ files }: Props): JSX.Element {
           {results.slice(0, 100).map((result, index) => (
             <div className="fs-i-w" key={result.title}>
               <NavLink
-                to={`/notes/${result.title}`}
+                to={`/files/${result.title}`}
                 state={{ title: result.title, force: true }}
                 replace
                 data-index={index}

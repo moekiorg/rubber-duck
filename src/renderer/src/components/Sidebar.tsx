@@ -45,7 +45,7 @@ const FileItem = ({
     <div style={style} className="px-2">
       <NavLink
         key={title}
-        to={`/notes/${title}`}
+        to={`/files/${title}`}
         state={{ title }}
         replace
         id={title}

@@ -14,7 +14,7 @@ interface API {
   getFiles: () => Promise<Array<FileType>>
   getBody: (string) => Promise<string>
   writeFile: (string, string, string) => Promise<boolean>
-  createFile: (title?) => Promise<FileType>
+  createFile: (title?, body?) => Promise<FileType>
   deleteFile: (string) => Promise<boolean>
   getConfig: (string) => Promise<string>
   setConfig: (string, string) => Promise<void>
