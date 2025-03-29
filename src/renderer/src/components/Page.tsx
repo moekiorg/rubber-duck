@@ -237,7 +237,7 @@ export default function Page(): JSX.Element {
         />
         <article>
           <Header
-            title={currentTitle || ''}
+            title={isSearchMode ? '' : currentTitle || ''}
             onCreate={() => handleCreate()}
             onToggleSearchMode={() => {
               setIsSearchMode(!isSearchMode)
