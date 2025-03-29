@@ -11,9 +11,8 @@ input {
     --color-text-primary: rgb(222, 222, 222);
     --color-border-primary: rgb(90, 90, 90);
     --color-bg-primary: rgb(30, 30, 30);
-    --color-bg-primary-active: rgb(60, 60, 60);
+    --color-bg-active: rgb(240, 240, 240, 0.15);
     --color-bg-secondary: rgb(50, 50, 50);
-    --color-bg-secondary-active: rgba(80, 80, 80);
   }
 }
 
@@ -22,9 +21,8 @@ input {
     --color-text-primary: rgba(30, 30, 30);
     --color-border-primary: rgba(240, 240, 240);
     --color-bg-primary: rgb(256, 256, 256);
-    --color-bg-primary-active: rgb(226, 226, 226);
+    --color-bg-active: rgb(0, 0, 0, 0.05);
     --color-bg-secondary: rgb(240, 240, 240);
-    --color-bg-secondary-active: rgba(210, 210, 210);
   }
 }
 
@@ -123,7 +121,7 @@ header {
 }
 
 .t-button {
-  @apply hover:bg-[var(--color-bg-primary-active)] rounded py-1 px-2 transition-all;
+  @apply hover:bg-[var(--color-bg-active)] rounded py-1 px-2 transition-all;
 }
 
 .shortcut {
@@ -152,7 +150,7 @@ aside {
 }
 
 .fi--active {
-  @apply bg-[var(--color-bg-secondary-active)];
+  @apply bg-[var(--color-bg-active)];
 }
 
 .fs-c {
@@ -168,7 +166,7 @@ aside {
 }
 
 .i-button {
-  @apply rounded p-1 flex items-center transition-all hover:bg-[var(--color-bg-secondary-active)];
+  @apply rounded p-1 flex items-center transition-all hover:bg-[var(--color-bg-active)];
 }
 
 .fs-l {
@@ -188,7 +186,7 @@ aside {
 }
 
 .fs-i--active {
-  @apply bg-[var(--color-bg-primary-active)];
+  @apply bg-[var(--color-bg-active)];
 }
 
 .cm-completionIcon {
@@ -245,5 +243,5 @@ input[type='checkbox'] {
 }
 
 .fts-line--active {
-  @apply bg-[var(--color-bg-primary-active)];
+  @apply bg-[var(--color-bg-active)];
 }
