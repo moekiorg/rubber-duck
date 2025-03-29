@@ -36,6 +36,9 @@ export default function FileSearch({ files }: Props): JSX.Element {
 
   const updateSelection = useCallback(
     (e): void => {
+      if (focus !== 'fileSearch') {
+        return
+      }
       if (
         (e.key === 'ArrowDown' || (e.ctrlKey && e.key == 'n')) &&
         selectedIndex < results.length - 1
@@ -59,13 +62,14 @@ export default function FileSearch({ files }: Props): JSX.Element {
       if (e.key === 'Enter') {
         e.preventDefault()
         document.querySelector<HTMLElement>(`[data-index="${selectedIndex}"]`)?.click()
+        setFocus('editor')
       }
       if (e.key === 'Escape') {
         e.preventDefault()
         setFocus('editor')
       }
     },
-    [selectedIndex, results.length, setFocus]
+    [focus, selectedIndex, results.length, setFocus]
   )
 
   useEffect(() => {
@@ -99,7 +103,7 @@ export default function FileSearch({ files }: Props): JSX.Element {
           value={query || ''}
           type="text"
           ref={searchField}
-          placeholder={intl.formatMessage({ id: 'searchFile' })}
+          placeholder={intl.formatMessage({ id: 'searchFilePlaceHolder' })}
           autoFocus
           onChange={handleQueryChange}
           className="fs-f"

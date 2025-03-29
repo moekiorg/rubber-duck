@@ -208,8 +208,11 @@ export default function Page(): JSX.Element {
   useEffect(() => {
     if (location.state?.force) {
       setFocus('editor')
+      setTimeout(() => {
+        bodyEditor?.current?.view?.focus()
+      }, 100)
     }
-  }, [location, setFocus])
+  }, [bodyEditor, location, setFocus])
 
   return (
     <>
