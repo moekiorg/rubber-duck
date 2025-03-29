@@ -9,7 +9,8 @@ const api = {
   getBody: (id: string): Promise<string> => ipcRenderer.invoke('getBody', id),
   writeFile: (title: string, body: string, id: string): Promise<boolean> =>
     ipcRenderer.invoke('writeFile', title, body, id),
-  createFile: (title: string): Promise<FileType> => ipcRenderer.invoke('createFile', title),
+  createFile: (title: string, body: string): Promise<FileType> =>
+    ipcRenderer.invoke('createFile', title, body),
   deleteFile: (title): Promise<boolean> => ipcRenderer.invoke('deleteFile', title),
   getConfig: (key): Promise<string> => ipcRenderer.invoke('getConfig', key),
   setConfig: (key, value): Promise<string> => ipcRenderer.invoke('setConfig', key, value),

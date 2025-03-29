@@ -16,7 +16,7 @@ export const handleFilesGet = async (watcher): Promise<Array<File>> => {
     watcher.close()
   }
 
-  const chokidarWatcher = chokidar.watch(store.get('path') as string, {
+  const chokidarWatcher = chokidar.watch(store.get('general.path') as string, {
     persistent: true, // アクティブでないときも検知
     ignoreInitial: true // 初期検出を無視
   })
@@ -39,10 +39,13 @@ export const handleFilesGet = async (watcher): Promise<Array<File>> => {
   })
 
   chokidarWatcher.on('add', async () => {
+    if (globalThis.lastWriteTime && Date.now() - globalThis.lastWriteTime < 100) {
+      return
+    }
     mainWindow?.webContents.send('file-event:add')
   })
 
-  const dirPath = store.get('path') as string
+  const dirPath = store.get('general.path') as string
   let files = readdirSync(dirPath).map((f) => {
     const stats = statSync(dirPath + '/' + f)
     return {

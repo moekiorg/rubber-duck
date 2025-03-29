@@ -161,7 +161,7 @@ export function FullTextSearch({ currentTitle }: { currentTitle: string | null }
             {results.map((result, index) => (
               <div key={result.title} className="fts-rc">
                 <NavLink
-                  to={`/notes/${result.title}`}
+                  to={`/files/${result.title}`}
                   state={{ title: result.title }}
                   className="fts-title"
                   onClick={() => setFocus('editor')}
@@ -171,7 +171,7 @@ export function FullTextSearch({ currentTitle }: { currentTitle: string | null }
                 <div>
                   {result.lines.map((line, lineIndex) => (
                     <NavLink
-                      to={`/notes/${result.title}`}
+                      to={`/files/${result.title}`}
                       id={`result-${
                         sum(results.slice(0, index).map((result) => result.lines.length)) +
                         lineIndex

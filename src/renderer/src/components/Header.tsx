@@ -20,7 +20,7 @@ export default function Header({
   const location = useLocation()
 
   useEffect(() => {
-    window.api.getConfig('path').then((path) => {
+    window.api.getConfig('general.path').then((path) => {
       setFolder(path.split('/').pop()!)
     })
   })

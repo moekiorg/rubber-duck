@@ -49,7 +49,7 @@ export default function App(): JSX.Element {
             <HashRouter>
               <Routes>
                 <Route path="/" element={<Page />} />
-                <Route path="/notes/:id" element={<Page />} />
+                <Route path="/files/:id" element={<Page />} />
                 <Route path="/setup" element={<Setup />} />
               </Routes>
             </HashRouter>

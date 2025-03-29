@@ -22,17 +22,15 @@ const watcher: FSWatcher | null = null
 let mainWindow: BrowserWindow
 
 app.whenReady().then(() => {
-  protocol.handle('zen', (request: Request): Promise<GlobalResponse> => {
-    const url = request.url.replace('zen://', 'file:///')
+  protocol.handle('zen-file', (request: Request): Promise<GlobalResponse> => {
+    const url = request.url.replace('zen-file://', 'file:///')
+
     return net.fetch(normalize(url))
   })
 
   electronApp.setAppUserModelId('com.electron')
 
   mainWindow = createWindow()
-
-  mainWindow.setBackgroundMaterial('acrylic')
-  mainWindow.setVibrancy('under-window')
 
   app.on('browser-window-created', (_, window) => {
     optimizer.watchWindowShortcuts(window)
@@ -41,6 +39,10 @@ app.whenReady().then(() => {
     if (BrowserWindow.getAllWindows().length === 0) {
       createWindow()
     }
+  })
+  app.on('open-url', (event, url) => {
+    event.preventDefault()
+    handleCustomURL(url)
   })
 
   initializeConfig()
@@ -70,5 +72,17 @@ app.on('window-all-closed', () => {
     app.quit()
   }
 })
+
+export const handleCustomURL = (url: string): void => {
+  const parsedUrl = new URL(url)
+
+  if (parsedUrl.host === 'open') {
+    openFile(parsedUrl.searchParams.get('title'), parsedUrl.searchParams.get('body'))
+  }
+}
+
+const openFile = (title, body): void => {
+  mainWindow.webContents.send('open-file', title, body)
+}
 
 export { mainWindow }

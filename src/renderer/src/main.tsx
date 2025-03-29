@@ -5,7 +5,7 @@ import React from 'react'
 import ReactDOM from 'react-dom/client'
 import App from './App'
 
-window.textZen.path = await window.api.getConfig('path')
+window.textZen.path = await window.api.getConfig('general.path')
 try {
   const fs = await window.api.getFiles()
   window.textZen.files = fs

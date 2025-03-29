@@ -60,7 +60,7 @@ export default function Page(): JSX.Element {
   }, [])
 
   const handleCreate = useCallback(
-    async (t: string | null = null): Promise<void> => {
+    async (t: string | null = null, body: string | null = null): Promise<void> => {
       let title: string | null = t
       let counter = 0
       if (!t) {
@@ -69,10 +69,10 @@ export default function Page(): JSX.Element {
           counter++
         } while (files.map((f) => f.title).includes(title))
       }
-      const result = await window.api.createFile(title)
+      const result = await window.api.createFile(title, body)
       setFiles([result, ...files])
       setAllFiles([result, ...files])
-      await navigate(`/notes/${result.title}`, {
+      await navigate(`/files/${result.title}`, {
         replace: true,
         state: { title: result.title }
       })
@@ -148,7 +148,7 @@ export default function Page(): JSX.Element {
 
   useEffect(() => {
     window.electron.ipcRenderer.on('replace', async (_, title) => {
-      navigate(`/notes/${title}`, {
+      navigate(`/files/${title}`, {
         replace: true,
         state: { title }
       })
@@ -174,6 +174,20 @@ export default function Page(): JSX.Element {
       window.electron.ipcRenderer.removeAllListeners('search-file')
     }
   }, [focus, setFocus, toggleFocus])
+
+  useEffect(() => {
+    window.electron.ipcRenderer.on('open-file', (_, title, body) => {
+      if (files.map((file) => file.title).includes(title)) {
+        navigate(`/files/${title}`, { state: { title } })
+      } else {
+        handleCreate(title, body)
+      }
+    })
+
+    return (): void => {
+      window.electron.ipcRenderer.removeAllListeners('open-file')
+    }
+  }, [files, focus, handleCreate, navigate, setFocus, toggleFocus])
 
   useEffect(() => {
     window.electron.ipcRenderer.on('new', () => {

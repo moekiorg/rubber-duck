@@ -9,7 +9,7 @@ export const handleFileWrite = async (
   body: string,
   id: string
 ): Promise<boolean> => {
-  const dirPath = store.get('path') as string
+  const dirPath = store.get('general.path') as string
   const files = readdirSync(dirPath).map((f) => {
     const stats = statSync(dirPath + '/' + f)
     return {
