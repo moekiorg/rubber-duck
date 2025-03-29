@@ -17,7 +17,7 @@ export type SearchResult = {
   lines: Array<Line>
 }
 
-export function Search(): JSX.Element {
+export function FullTextSearch(): JSX.Element {
   const [results, setResults] = useState<Array<SearchResult>>([])
   const [query, setQuery] = useState<string>('')
   const [history, setHistory] = useState<Array<string>>([])
@@ -40,8 +40,6 @@ export function Search(): JSX.Element {
       setIsNotFound(false)
     }
   }, 500)
-
-  console.log(focus)
 
   if (focus !== 'fullTextSearch') {
     return <></>
@@ -73,7 +71,7 @@ export function Search(): JSX.Element {
             console.warn(e)
           }
         }
-        if (e.key === 'Enter' || (e.key === ' ' && currentSelectedResult > 0)) {
+        if ((e.key === 'Enter' || e.key === ' ') && currentSelectedResult > -1) {
           document.querySelector<HTMLAnchorElement>(`#result-${currentSelectedResult}`)!.click()
         }
       }}

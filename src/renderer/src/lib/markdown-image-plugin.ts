@@ -45,7 +45,7 @@ export const markdownImagePlugin = ViewPlugin.fromClass(
             const dir = window.textZen.path
             widgets.push(
               Decoration.widget({
-                widget: new ImageWidget(`app:/${dir}/${url}`),
+                widget: new ImageWidget(`zen:/${dir}/${url}`),
                 side: 1
               }).range(start)
             )

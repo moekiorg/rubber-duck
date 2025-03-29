@@ -1,6 +1,6 @@
 import { Menu, shell } from 'electron'
 import { handleDirOpen } from './listeners/handle-dir-open'
-import { handleSearch } from './listeners/handle-search'
+import { handleSearchFile } from './listeners/handle-search'
 import { mainWindow } from '.'
 import { store } from './lib/store'
 import { intl } from './lib/intl'
@@ -32,8 +32,13 @@ const template = [
         accelerator: 'Cmd+N'
       },
       { type: 'separator' },
-      { click: handleSearch, label: intl.formatMessage({ id: 'search' }), accelerator: 'Cmd+P' },
       {
+        click: handleSearchFile,
+        label: intl.formatMessage({ id: 'search' }),
+        accelerator: 'Cmd+P'
+      },
+      {
+        id: 'toggle-search-full-text',
         click: (): void => mainWindow?.webContents.send('toggle-search-full-text'),
         label: intl.formatMessage({ id: 'searchFullText' }),
         accelerator: 'Cmd+Shift+F'
