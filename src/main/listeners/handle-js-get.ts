@@ -4,7 +4,7 @@ import { join } from 'path'
 
 export const handleJsGet = async (): Promise<Array<string>> => {
   try {
-    const dirPath = store.get('path') as string
+    const dirPath = store.get('general.path') as string
     return readdirSync(join(dirPath, '.text-zen'))
       .filter((file) => file.endsWith('.js'))
       .map((file) => `zen://${join(dirPath, '.text-zen', file)}`)

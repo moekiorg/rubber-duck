@@ -24,14 +24,14 @@ export const createMenu = (event, id, title): Electron.Menu => {
     {
       label: intl.formatMessage({ id: 'openInDefaultApp' }),
       click: (): void => {
-        const dirPath = store.get('path') as string
+        const dirPath = store.get('general.path') as string
         shell.openPath(join(dirPath, `${title}.md`))
       }
     },
     {
       label: intl.formatMessage({ id: 'revealInFinder' }),
       click: (): void => {
-        const dirPath = store.get('path') as string
+        const dirPath = store.get('general.path') as string
         shell.showItemInFolder(join(dirPath, `${title}.md`))
       }
     },

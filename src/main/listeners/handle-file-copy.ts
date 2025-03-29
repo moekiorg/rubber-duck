@@ -4,7 +4,7 @@ import { writeFileSync } from 'fs'
 
 export const handleFileCopy = async (_, filePath, buffer): Promise<string> => {
   const fileName = basename(filePath)
-  const targetPath = join(store.get('path') as string, fileName)
+  const targetPath = join(store.get('general.path') as string, fileName)
 
   writeFileSync(targetPath, buffer)
 
