@@ -1,4 +1,4 @@
-import { useCallback, useContext, useEffect, useRef, useState } from 'react'
+import { useCallback, useContext, useEffect, useState } from 'react'
 import { useLocation, useNavigate } from 'react-router'
 import Sidebar from './Sidebar'
 import Header from './Header'
@@ -7,6 +7,7 @@ import Editor from './Editor'
 import { FormattedMessage } from 'react-intl'
 import { Search } from './Search'
 import { EditorContext } from '@renderer/contexts/editorContext'
+import { FocusContext } from '@renderer/contexts/FocusContext'
 
 export interface File {
   id: string
@@ -19,17 +20,14 @@ export default function Page(): JSX.Element {
   const [files, setFiles] = useState<Array<File>>([])
   const [allFiles, setAllFiles] = useState<Array<File>>([])
   const navigate = useNavigate()
-  const [currentId, setCurrentId] = useState<string | null>(null)
   const [currentFile, setCurrentFile] = useState<File | null>(null)
   const [currentTitle, setCurrentTitle] = useState<string | null>(null)
   const [filteredFiles, setFilteredFiles] = useState<Array<File>>([])
   const [query, setQuery] = useState('')
-  const [isSearchVisible, setIsSearchVisible] = useState(false)
   const [isSidebarVisible, setIsSidebarVisible] = useState(false)
   const [isDeleted, setIsDeleted] = useState(false)
-  const titleEditor = useRef<HTMLTextAreaElement>(null)
-  const { ref: bodyEditor } = useContext(EditorContext)
-  const [isSearchMode, setIsSearchMode] = useState(false)
+  const { titleEditor, bodyEditor, current, setCurrent } = useContext(EditorContext)
+  const { focus, setFocus, isFileSearchVisible, toggleFileSearchVisible } = useContext(FocusContext)
 
   useEffect(() => {
     if (location.state?.line) {
@@ -48,10 +46,14 @@ export default function Page(): JSX.Element {
 
   useEffect(() => {
     window.electron.ipcRenderer.on('toggle-search-full-text', () => {
-      setIsSearchMode(!isSearchMode)
+      if (focus !== 'fullTextSearch') {
+        setFocus('fullTextSearch')
+      } else {
+        setFocus('editor')
+      }
       document.querySelector('article')!.scrollTo(0, 0)
     })
-  }, [isSearchMode])
+  }, [focus, setFocus])
 
   useEffect(() => {
     window.api.getConfig('sidebar.visible').then((value) => {
@@ -64,10 +66,10 @@ export default function Page(): JSX.Element {
   }, [])
 
   useEffect(() => {
-    if (isSearchVisible) {
+    if (isFileSearchVisible) {
       setIsSidebarVisible(true)
     }
-  }, [isSearchVisible, setIsSidebarVisible, isSidebarVisible])
+  }, [isFileSearchVisible, setIsSidebarVisible, isSidebarVisible])
 
   const handleCreate = useCallback(
     async (t = null): Promise<void> => {
@@ -86,9 +88,9 @@ export default function Page(): JSX.Element {
         replace: true,
         state: { title: result.title }
       })
-      setTimeout(() => titleEditor.current?.select(), 50)
+      setTimeout(() => titleEditor?.current?.select(), 50)
     },
-    [files, navigate]
+    [files, navigate, titleEditor]
   )
 
   useEffect(() => {
@@ -101,12 +103,12 @@ export default function Page(): JSX.Element {
       handleCreate(location.state.title)
       return
     }
-    setCurrentId(file?.id || null)
+    setCurrent(file?.id || null)
     setCurrentFile(file)
-    if (file?.id !== currentId) {
+    if (file?.id !== current) {
       setCurrentTitle(file?.title || null)
     }
-  }, [location.state, allFiles, handleCreate, location.pathname, isDeleted, currentId])
+  }, [location.state, allFiles, handleCreate, location.pathname, isDeleted, current, setCurrent])
 
   useEffect(() => {
     setIsDeleted(false)
@@ -131,9 +133,9 @@ export default function Page(): JSX.Element {
       if (result) {
         setFiles((prevFiles) => prevFiles.filter((file) => file.id !== id))
         setAllFiles((prevFiles) => prevFiles.filter((file) => file.id !== id))
-        if (id === currentId) {
+        if (id === current) {
           setCurrentFile(null)
-          setCurrentId(null)
+          setCurrent(null)
           setIsDeleted(true)
           return
         }
@@ -143,7 +145,7 @@ export default function Page(): JSX.Element {
     return (): void => {
       window.electron.ipcRenderer.removeAllListeners('delete-file')
     }
-  }, [currentFile, currentId, navigate])
+  }, [current, currentFile, navigate, setCurrent])
 
   useEffect(() => {
     window.electron.ipcRenderer.on('replace', async (_, title) => {
@@ -165,12 +167,12 @@ export default function Page(): JSX.Element {
   }
 
   const toggleSearchSection = useCallback((): void => {
-    setIsSearchVisible(!isSearchVisible)
+    toggleFileSearchVisible()
 
-    if (isSearchVisible) {
+    if (isFileSearchVisible) {
       setQuery('')
     }
-  }, [isSearchVisible])
+  }, [isFileSearchVisible, toggleFileSearchVisible])
 
   useEffect(() => {
     init()
@@ -218,9 +220,9 @@ export default function Page(): JSX.Element {
 
   useEffect(() => {
     if (location.state?.force) {
-      setIsSearchMode(false)
+      setFocus('editor')
     }
-  }, [location])
+  }, [location, setFocus])
 
   return (
     <>
@@ -229,22 +231,16 @@ export default function Page(): JSX.Element {
           files={files}
           isVisible={isSidebarVisible}
           filteredFiles={filteredFiles}
-          isSearchVisible={isSearchVisible}
           onChange={handleQueryChange}
-          currentFile={currentFile}
-          currentId={currentId}
           query={query}
         />
         <article>
           <Header
-            title={isSearchMode ? '' : currentTitle || ''}
+            title={focus === 'fullTextSearch' ? '' : currentTitle || ''}
             onCreate={() => handleCreate()}
-            onToggleSearchMode={() => {
-              setIsSearchMode(!isSearchMode)
-            }}
           />
-          <Search visible={isSearchMode} setIsSearchMode={setIsSearchMode}></Search>
-          {!isSearchMode && (
+          <Search></Search>
+          {focus !== 'fullTextSearch' && (
             <>
               {currentFile ? (
                 <Editor
@@ -254,10 +250,9 @@ export default function Page(): JSX.Element {
                   files={allFiles}
                   onTitleChange={handleTitleChange}
                   onBodyChange={handleBodyChange}
-                  titleEditor={titleEditor}
                 />
               ) : (
-                <div className="empty-page">
+                <div className="ep">
                   <div className="container">
                     <button
                       type="button"

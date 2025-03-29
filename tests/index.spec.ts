@@ -82,7 +82,7 @@ test('リンクを書き換えること', async () => {
   await page.waitForTimeout(1000)
 
   await page.getByRole('link', { name: '参照先', exact: true }).click()
-  await page.locator('.title-field').click()
+  await page.locator('.tf').click()
   await page.keyboard.insertText('編集済み')
   await page.waitForTimeout(1000)
 

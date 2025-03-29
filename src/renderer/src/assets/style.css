@@ -59,16 +59,16 @@ article {
   @apply w-full h-screen overflow-y-scroll bg-white;
 }
 
-.empty-page {
+.ep {
   @apply w-full grow bg-[rgb(235,235,235)]  p-20 flex text-[10pt] items-center justify-center h-[calc(100vh-48px)];
 }
 
-.title-field {
+.tf {
   @apply outline-none text-lg p-3 pb-0 resize-none w-full font-semibold text-gray-800;
 }
 
 header {
-  @apply bg-[rgb(245,245,245)] sticky top-0 z-10 text-[10pt] flex items-center px-3 h-[48px] shadow-sm justify-center text-gray-800;
+  @apply bg-[rgb(245,245,245)] sticky top-0 z-10 text-[10pt] flex items-center px-3 h-[48px] shadow-sm justify-between text-gray-800;
   -webkit-app-region: drag;
 }
 
@@ -76,7 +76,7 @@ header {
   @apply bg-[rgba(256,256,256)];
 }
 
-.setup-container {
+.setup {
   @apply bg-white p-20 flex text-[10pt] items-center justify-center h-[calc(100vh-30px)];
 }
 
@@ -84,7 +84,7 @@ header {
   @apply flex gap-2 items-center text-gray-500 justify-center;
 }
 
-.open-file-button {
+.t-button {
   @apply hover:bg-gray-50 rounded py-1 px-2 transition-all;
 }
 
@@ -100,41 +100,33 @@ aside {
   @apply select-none border-r border-[rgb(218,218,218)] max-w-none;
 }
 
-.sidebar-header {
+.s-h {
   @apply h-[48px];
   -webkit-app-region: drag;
 }
 
-.file-list {
+.fl {
   @apply h-[calc(100vh-40px)] relative pb-2;
 }
 
-.search-bar-container {
-  @apply p-3 pb-2;
+.fs-c {
+  @apply p-2 pt-0;
 }
 
-.search-icon {
-  @apply text-gray-600;
+.fs-f {
+  @apply bg-[rgba(255,255,255,0.7)] border gap-1 border-gray-300 rounded-lg p-1 flex items-center w-full;
 }
 
-.search-field {
-  @apply outline-none bg-[rgba(255,255,255,0.7)] border gap-1 border-gray-300 rounded-lg p-1 flex items-center w-full;
+.i-button {
+  @apply rounded p-2 text-gray-600 flex items-center transition-all hover:bg-[rgba(0,0,0,0.05)];
 }
 
-.sidebar-footer {
-  @apply opacity-0 fixed bottom-0 right-0;
-}
-
-.add-button {
-  @apply absolute left-2 rounded p-2 text-gray-600 flex items-center transition-all hover:bg-[rgba(0,0,0,0.05)];
-}
-
-.search-button {
-  @apply absolute right-2 rounded p-2 text-gray-600 flex items-center transition-all hover:bg-[rgba(0,0,0,0.05)];
-}
-
-.file-item {
+.fs-i {
   @apply h-full w-full block leading-[16px] text-gray-800 text-left cursor-default rounded px-2 py-1 items-center overflow-hidden truncate;
+}
+
+.fs-i--active {
+  @apply bg-[rgba(0,0,0,0.05)];
 }
 
 .cm-completionIcon {
@@ -152,10 +144,6 @@ aside {
 
 input[type='checkbox'] {
   @apply border !border-gray-300;
-}
-
-.new-file-button {
-  @apply hover:bg-[rgb(230,230,230)] rounded py-1 px-2 transition-all;
 }
 
 .highlight {

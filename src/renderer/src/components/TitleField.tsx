@@ -1,19 +1,21 @@
-import { KeyboardEventHandler } from 'react'
+import { EditorContext } from '@renderer/contexts/editorContext'
+import { KeyboardEventHandler, useContext } from 'react'
 import TextareaAutosize from 'react-textarea-autosize'
 
 interface Props {
   value: string
   onChange: (value: string) => void
-  editorRef: React.RefObject<HTMLTextAreaElement>
   onKeyDown: KeyboardEventHandler<HTMLTextAreaElement> | undefined
 }
 
-export default function TitleField({ value, editorRef, onChange, onKeyDown }: Props): JSX.Element {
+export default function TitleField({ value, onChange, onKeyDown }: Props): JSX.Element {
+  const { titleEditor } = useContext(EditorContext)
+
   return (
     <TextareaAutosize
       value={value}
-      className="title-field"
-      ref={editorRef}
+      className="tf"
+      ref={titleEditor}
       onChange={(e) => onChange(e.target.value)}
       onKeyDown={onKeyDown}
       title="Title"

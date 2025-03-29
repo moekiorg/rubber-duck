@@ -21,7 +21,7 @@ export default function Setup(): JSX.Element {
               await window.api.openFile()
               navigate('/')
             }}
-            className="open-file-button"
+            className="t-button"
           >
             <FormattedMessage id="openFolder" />
           </button>

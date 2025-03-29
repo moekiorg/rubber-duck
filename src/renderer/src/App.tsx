@@ -5,27 +5,54 @@ import { EditorContext } from './contexts/editorContext'
 import { useRef, useState } from 'react'
 import { IntlProvider } from 'react-intl'
 import { ja } from './lib/ja'
+import { FocusContext, FocusTarget } from './contexts/FocusContext'
+import { FileListContext } from './contexts/FIleListContext'
 
 export default function App(): JSX.Element {
-  const editorRef = useRef(null)
+  const titleEditor = useRef(null)
+  const bodyEditor = useRef(null)
   const [isEditorVisible, setIsEditorVisible] = useState(true)
+  const [focus, setFocus] = useState<FocusTarget>('fileList')
+  const [currentListItem, setCurrentListItem] = useState<string | null>(null)
+  const [isFileSearchVisible, setIsFileSearchVisible] = useState(false)
+  const [current, setCurrent] = useState<string | null>(null)
+
+  const toggleFileSearchVisible = (): void => {
+    setIsFileSearchVisible(!isFileSearchVisible)
+  }
 
   return (
     <IntlProvider messages={ja} locale="ja">
       <EditorContext.Provider
         value={{
-          ref: editorRef,
+          titleEditor,
+          bodyEditor,
           isVisible: isEditorVisible,
-          setIsVisible: setIsEditorVisible
+          setIsVisible: setIsEditorVisible,
+          current,
+          setCurrent
         }}
       >
-        <HashRouter>
-          <Routes>
-            <Route path="/" element={<Page />} />
-            <Route path="/notes/:id" element={<Page />} />
-            <Route path="/setup" element={<Setup />} />
-          </Routes>
-        </HashRouter>
+        <FocusContext.Provider
+          value={{
+            focus,
+            setFocus,
+            isFileSearchVisible,
+            toggleFileSearchVisible
+          }}
+        >
+          <FileListContext.Provider
+            value={{ current: currentListItem, setCurrent: setCurrentListItem }}
+          >
+            <HashRouter>
+              <Routes>
+                <Route path="/" element={<Page />} />
+                <Route path="/notes/:id" element={<Page />} />
+                <Route path="/setup" element={<Setup />} />
+              </Routes>
+            </HashRouter>
+          </FileListContext.Provider>
+        </FocusContext.Provider>
       </EditorContext.Provider>
     </IntlProvider>
   )
