@@ -8,7 +8,7 @@ import { internalLinkCompletion } from '@renderer/lib/internal-link-completion'
 import { internalLink } from '@renderer/lib/internal-link-plugin'
 import { markdownImagePlugin } from '@renderer/lib/markdown-image-plugin'
 import CodeMirror, { EditorView } from '@uiw/react-codemirror'
-import { KeyboardEventHandler, useCallback, useContext, useEffect } from 'react'
+import { KeyboardEventHandler, useCallback, useContext } from 'react'
 
 interface Props {
   value: string
@@ -19,25 +19,7 @@ interface Props {
 window.EditContext = false
 
 export default function BodyField({ value, onChange, onKeyDownCapture }: Props): JSX.Element {
-  const { bodyEditor, isVisible, setIsVisible } = useContext(EditorContext)
-
-  useEffect(() => {
-    const handleKeyDown = (e): void => {
-      if (e.metaKey && e.key === '1' && bodyEditor?.current) {
-        bodyEditor.current.view?.focus()
-      }
-      if (e.metaKey && e.key === '0') {
-        setIsVisible(false)
-        setTimeout(() => setIsVisible(true), 1)
-      }
-    }
-
-    window.addEventListener('keydown', handleKeyDown)
-
-    return (): void => {
-      window.removeEventListener('keydown', handleKeyDown)
-    }
-  }, [bodyEditor, setIsVisible])
+  const { bodyEditor, isVisible } = useContext(EditorContext)
 
   const insertImage = useCallback(
     (name, pos): void => {

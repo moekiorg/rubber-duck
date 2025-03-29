@@ -103,9 +103,6 @@ export default function Sidebar({
 
   const updateSelection = useCallback(
     (e): void => {
-      if (e.target.closest('input')) {
-        return
-      }
       if (focus !== 'fileList') {
         return
       }
@@ -148,15 +145,12 @@ export default function Sidebar({
           setTimeout(() => setIsEditorVisible(true), 1)
         }
       }
-      if (e.metaKey && e.key === '1') {
-        setFocus('editor')
-      }
       if (e.key === ' ') {
         e.preventDefault()
         document.querySelector<HTMLElement>(`[data-id="${currentListItem}"]`)?.click()
       }
     },
-    [currentListItem, bodyEditor, focus, setCurrentListItem, setFocus, setIsEditorVisible]
+    [currentListItem, bodyEditor, focus, setCurrentListItem, setIsEditorVisible]
   )
 
   useEffect(() => {
