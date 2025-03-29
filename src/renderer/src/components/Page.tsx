@@ -56,11 +56,11 @@ export default function Page(): JSX.Element {
   }, [focus, setFocus])
 
   useEffect(() => {
-    window.api.getConfig('sidebar.visible').then((value) => {
+    window.api.getConfig('view.sidebar.visible').then((value) => {
       setIsSidebarVisible(Boolean(value))
     })
     window.electron.ipcRenderer.on('toggle-sidebar', async () => {
-      const value = await window.api.getConfig('sidebar.visible')
+      const value = await window.api.getConfig('view.sidebar.visible')
       setIsSidebarVisible(Boolean(value))
     })
   }, [])

@@ -92,11 +92,11 @@ export default function Sidebar({
   })
 
   useEffect(() => {
-    window.api.getConfig('sidebar.width').then((value) => {
+    window.api.getConfig('view.sidebar.width').then((value) => {
       setWidth(Number(value))
     })
     window.electron.ipcRenderer.on('toggle-sidebar', async () => {
-      const value = await window.api.getConfig('sidebar.width')
+      const value = await window.api.getConfig('view.sidebar.width')
       setWidth(Number(value))
     })
   }, [])
@@ -194,7 +194,7 @@ export default function Sidebar({
             const newWidth = event.rect.width * 1.3
             target.style.width = newWidth + 'px'
             setWidth(newWidth)
-            window.api.setConfig('sidebar.width', newWidth)
+            window.api.setConfig('view.sidebar.width', newWidth)
           })
         }
       }
