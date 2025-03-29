@@ -105,22 +105,24 @@ export default function FileSearch({ files }: Props): JSX.Element {
           className="fs-f"
         />
       </div>
-      <div className="fs-l">
-        {results.slice(0, 100).map((result, index) => (
-          <div className="fs-i-w" key={result.title}>
-            <NavLink
-              to={`/notes/${result.title}`}
-              state={{ title: result.title, force: true }}
-              replace
-              data-index={index}
-              id={result.title}
-              className={`fs-i ${index === selectedIndex ? 'fs-i--active' : ''}`}
-            >
-              {result.title}
-            </NavLink>
-          </div>
-        ))}
-      </div>
+      {results.length > 0 && (
+        <div className="fs-l">
+          {results.slice(0, 100).map((result, index) => (
+            <div className="fs-i-w" key={result.title}>
+              <NavLink
+                to={`/notes/${result.title}`}
+                state={{ title: result.title, force: true }}
+                replace
+                data-index={index}
+                id={result.title}
+                className={`fs-i ${index === selectedIndex ? 'fs-i--active' : ''}`}
+              >
+                {result.title}
+              </NavLink>
+            </div>
+          ))}
+        </div>
+      )}
     </div>
   )
 }
