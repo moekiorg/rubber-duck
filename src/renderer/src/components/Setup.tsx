@@ -1,4 +1,5 @@
 import { useEffect } from 'react'
+import Header from './Header'
 import { useNavigate } from 'react-router'
 import { FormattedMessage } from 'react-intl'
 
@@ -11,7 +12,8 @@ export default function Setup(): JSX.Element {
 
   return (
     <>
-      <div className="setup-container">
+      <Header title="" onCreate={() => {}} isSidebarVisible={false} />
+      <div className="setup">
         <div className="container">
           <button
             type="button"

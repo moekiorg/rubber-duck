@@ -6,6 +6,28 @@ input {
   -webkit-app-region: no-drag;
 }
 
+@media (prefers-color-scheme: dark) {
+  :root {
+    --color-text-primary: rgb(222, 222, 222);
+    --color-border-primary: rgb(90, 90, 90);
+    --color-bg-primary: rgb(30, 30, 30);
+    --color-bg-primary-active: rgb(60, 60, 60);
+    --color-bg-secondary: rgb(50, 50, 50);
+    --color-bg-secondary-active: rgba(80, 80, 80);
+  }
+}
+
+@media (prefers-color-scheme: light) {
+  :root {
+    --color-text-primary: rgba(30, 30, 30);
+    --color-border-primary: rgba(240, 240, 240);
+    --color-bg-primary: rgb(256, 256, 256);
+    --color-bg-primary-active: rgb(226, 226, 226);
+    --color-bg-secondary: rgb(240, 240, 240);
+    --color-bg-secondary-active: rgba(210, 210, 210);
+  }
+}
+
 * {
   @apply placeholder:text-gray-300;
 }
@@ -19,7 +41,7 @@ input {
 }
 
 html {
-  @apply h-screen overflow-hidden;
+  @apply h-screen overflow-hidden text-[var(--color-text-primary)];
 }
 
 .cm-focused {
@@ -31,7 +53,7 @@ html {
 }
 
 .cm-editor {
-  @apply !h-auto !max-h-none;
+  @apply !h-auto !max-h-none bg-[var(--color-bg-primary)];
 }
 
 .cm-scroller {
@@ -56,15 +78,15 @@ main {
 }
 
 article {
-  @apply w-full h-screen overflow-y-scroll bg-white;
+  @apply w-full h-screen overflow-y-scroll bg-[var(--color-bg-primary)];
 }
 
 .ep {
-  @apply w-full grow bg-[rgb(235,235,235)]  p-20 flex text-[10pt] items-center justify-center h-[calc(100vh-48px)];
+  @apply w-full grow bg-[var(--color-bg-primary)]  p-20 flex text-[10pt] items-center justify-center h-[calc(100vh-48px)];
 }
 
 .tf {
-  @apply outline-none text-lg p-3 pb-0 resize-none w-full font-semibold text-gray-800;
+  @apply outline-none text-lg p-3 pb-0 resize-none w-full font-semibold;
 }
 
 .folder {
@@ -76,7 +98,7 @@ article {
 }
 
 header {
-  @apply bg-[rgb(245,245,245)] sticky justify-between top-0 z-10 text-[10pt] flex items-center px-3 h-[48px] shadow-sm gap-2  text-gray-700;
+  @apply sticky justify-between top-0 z-10 text-[10pt] flex items-center px-3 h-[48px] shadow-sm gap-2  bg-[var(--color-bg-secondary)];
   -webkit-app-region: drag;
 }
 
@@ -92,20 +114,16 @@ header {
   @apply flex gap-2;
 }
 
-.editor {
-  @apply bg-[rgba(256,256,256)];
-}
-
 .setup {
-  @apply bg-white p-20 flex text-[10pt] items-center justify-center h-[calc(100vh-30px)];
+  @apply p-20 flex text-[10pt] items-center justify-center h-[calc(100vh-30px)] bg-[var(--color-bg-primary)];
 }
 
 .container {
-  @apply flex gap-2 items-center text-gray-500 justify-center;
+  @apply flex gap-2 items-center justify-center;
 }
 
 .t-button {
-  @apply hover:bg-[rgba(0,0,0,0.05)] rounded py-1 px-2 transition-all;
+  @apply hover:bg-[var(--color-bg-primary-active)] rounded py-1 px-2 transition-all;
 }
 
 .shortcut {
@@ -113,11 +131,11 @@ header {
 }
 
 .keyboard {
-  @apply border border-gray-300 bg-gray-50 w-6 flex items-center h-6 shadow rounded p-2 justify-center;
+  @apply border border-[var(--color-border-primary)] bg-[var(--color-bg-secondary)] w-6 flex items-center h-6 shadow rounded p-2 justify-center;
 }
 
 aside {
-  @apply select-none border-r border-[rgb(218,218,218)] max-w-none;
+  @apply select-none border-r border-[var(--color-border-primary)] max-w-none;
 }
 
 .s-h {
@@ -130,15 +148,15 @@ aside {
 }
 
 .fi {
-  @apply h-full w-full block leading-[16px] text-gray-800 text-left cursor-default rounded px-2 py-1 items-center overflow-hidden truncate;
+  @apply h-full w-full block leading-[16px] text-left cursor-default rounded px-2 py-1 items-center overflow-hidden truncate text-[var(--color-text-primary)];
 }
 
 .fi--active {
-  @apply bg-[rgba(0,0,0,0.05)];
+  @apply bg-[var(--color-bg-secondary-active)];
 }
 
 .fs-c {
-  @apply fixed top-4 left-1/2 -translate-x-1/2 bg-[rgb(240,240,240)] z-20 shadow-lg rounded max-w-[500px] w-full border border-gray-300;
+  @apply fixed top-4 left-1/2 -translate-x-1/2 bg-[var(--color-bg-secondary)] z-20 shadow-lg rounded max-w-[500px] w-full border border-[var(--color-border-primary)];
 }
 
 .fs-f-w {
@@ -146,11 +164,11 @@ aside {
 }
 
 .fs-f {
-  @apply bg-[rgba(255,255,255,0.7)] border gap-1 border-gray-300 rounded p-1 flex items-center w-full;
+  @apply border gap-1 dark:bg-[var(--color-bg-secondary)] border-[var(--color-border-primary)] rounded p-1 flex items-center w-full;
 }
 
 .i-button {
-  @apply rounded p-1 text-gray-500 flex items-center transition-all hover:bg-[rgba(0,0,0,0.05)];
+  @apply rounded p-1 flex items-center transition-all hover:bg-[var(--color-bg-secondary-active)];
 }
 
 .fs-l {
@@ -170,7 +188,7 @@ aside {
 }
 
 .fs-i--active {
-  @apply bg-[rgba(0,0,0,0.05)];
+  @apply bg-[var(--color-bg-primary-active)];
 }
 
 .cm-completionIcon {
@@ -182,12 +200,12 @@ aside {
 }
 
 .cm-button {
-  @apply !bg-white !border !border-gray-300 !rounded;
+  @apply !bg-[var(--color-bg-primary)] !border !border-[var(--color-border-primary)] !rounded;
   background-image: none !important;
 }
 
 input[type='checkbox'] {
-  @apply border !border-gray-300;
+  @apply border !border-[var(--color-border-primary)];
 }
 
 .highlight {
@@ -195,7 +213,7 @@ input[type='checkbox'] {
 }
 
 .fts {
-  @apply bg-white min-h-full;
+  @apply min-h-full;
 }
 
 .fts-nf {
@@ -211,21 +229,21 @@ input[type='checkbox'] {
 }
 
 .fts-line {
-  @apply text-gray-800 cursor-default block p-2 rounded;
+  @apply text-[var(--color-text-primary)] cursor-default block p-2 rounded;
 }
 
 .fts-result {
-  @apply min-h-[calc(100vh-96x)] px-5 py-2 divide-y divide-gray-300;
+  @apply min-h-[calc(100vh-96x)] px-5 py-2 divide-y divide-[var(--color-border-primary)];
 }
 
 .fts-header {
-  @apply p-2 shadow-sm sticky top-[48px] bg-[rgb(245,245,245)];
+  @apply p-2 shadow-sm sticky top-[48px] bg-[var(--color-bg-primary)];
 }
 
 .fts-field {
-  @apply rounded-lg bg-white px-2 py-1 w-full border border-gray-300;
+  @apply rounded-lg px-2 py-1 w-full border border-[var(--color-border-primary)];
 }
 
 .fts-line--active {
-  @apply bg-gray-100;
+  @apply bg-[var(--color-bg-primary-active)];
 }

@@ -21,7 +21,7 @@ export default function FileSearch({ files }: Props): JSX.Element {
   const [selectedIndex, setSelectedIndex] = useState(-1)
 
   useEffect(() => {
-    window.addEventListener('click', (e) => {
+    const handleClick = (e): void => {
       if (
         !(e.target as HTMLElement).closest('.fs') &&
         focus === 'fileSearch' &&
@@ -31,7 +31,12 @@ export default function FileSearch({ files }: Props): JSX.Element {
       ) {
         setFocus('editor')
       }
-    })
+    }
+    window.addEventListener('click', handleClick)
+
+    return (): void => {
+      window.removeEventListener('click', handleClick)
+    }
   }, [focus, intl, setFocus])
 
   const updateSelection = useCallback(
@@ -59,7 +64,7 @@ export default function FileSearch({ files }: Props): JSX.Element {
         searchField.current?.focus()
         e.preventDefault()
       }
-      if (e.key === 'Enter') {
+      if (e.key === 'Enter' && !e.isComposing) {
         e.preventDefault()
         document.querySelector<HTMLElement>(`[data-index="${selectedIndex}"]`)?.click()
         setFocus('editor')

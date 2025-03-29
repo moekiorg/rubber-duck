@@ -44,14 +44,10 @@ export default function Page(): JSX.Element {
 
   useEffect(() => {
     window.electron.ipcRenderer.on('toggle-search-full-text', () => {
-      if (focus !== 'fullTextSearch') {
-        setFocus('fullTextSearch')
-      } else {
-        setFocus('editor')
-      }
+      toggleFocus('fullTextSearch')
       document.querySelector('article')!.scrollTo(0, 0)
     })
-  }, [focus, setFocus])
+  }, [focus, setFocus, toggleFocus])
 
   useEffect(() => {
     window.api.getConfig('view.sidebar.visible').then((value) => {

@@ -9,5 +9,6 @@ const initialize = (name: string, value): void => {
 export const initializeConfig = (): void => {
   initialize('view.sidebar.visible', true)
   initialize('view.sidebar.width', 200)
+  initialize('view.theme', 'default')
   initialize('edit.linkAutoUpdate', true)
 }
