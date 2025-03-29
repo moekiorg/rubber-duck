@@ -36,19 +36,22 @@ export default function FileSearch({ files }: Props): JSX.Element {
 
   const updateSelection = useCallback(
     (e): void => {
-      if (e.key === 'ArrowDown' && selectedIndex < results.length - 1) {
+      if (
+        (e.key === 'ArrowDown' || (e.ctrlKey && e.key == 'n')) &&
+        selectedIndex < results.length - 1
+      ) {
         setSelectedIndex(selectedIndex + 1)
         const el = document.querySelector<HTMLElement>(`[data-index="${selectedIndex + 1}"]`)!
         scrollIntoView(el, { behavior: 'smooth', scrollMode: 'if-needed' })
         e.preventDefault()
       }
-      if (e.key === 'ArrowUp' && selectedIndex > -1) {
+      if ((e.key === 'ArrowUp' || (e.ctrlKey && e.key == 'p')) && selectedIndex > -1) {
         setSelectedIndex(selectedIndex - 1)
         const el = document.querySelector<HTMLElement>(`[data-index="${selectedIndex + 1}"]`)!
         scrollIntoView(el, { behavior: 'smooth', scrollMode: 'if-needed' })
         e.preventDefault()
       }
-      if (e.key === 'ArrowUp' && selectedIndex === 0) {
+      if ((e.key === 'ArrowUp' || (e.ctrlKey && e.key == 'p')) && selectedIndex === 0) {
         setSelectedIndex(selectedIndex - 1)
         searchField.current?.focus()
         e.preventDefault()
