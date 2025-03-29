@@ -213,11 +213,11 @@ input[type='checkbox'] {
 }
 
 .fts {
-  @apply min-h-full;
+  @apply min-h-[calc(100vh-120px)];
 }
 
 .fts-nf {
-  @apply min-h-[calc(100vh-96x)];
+  @apply min-h-[calc(100vh-120px)];
 }
 
 .fts-rc {

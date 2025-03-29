@@ -43,6 +43,12 @@ const template = [
         label: intl.formatMessage({ id: 'searchFullText' }),
         accelerator: 'Cmd+Shift+F'
       },
+      {
+        id: 'back-link',
+        click: (): void => mainWindow?.webContents.send('back-link'),
+        label: intl.formatMessage({ id: 'backLink' }),
+        accelerator: 'Cmd+Shift+G'
+      },
       { type: 'separator' },
       { role: 'close', label: intl.formatMessage({ id: 'close' }) }
     ]

@@ -17,7 +17,7 @@ export type SearchResult = {
   lines: Array<Line>
 }
 
-export function FullTextSearch(): JSX.Element {
+export function FullTextSearch({ currentTitle }: { currentTitle: string | null }): JSX.Element {
   const [results, setResults] = useState<Array<SearchResult>>([])
   const [query, setQuery] = useState<string>('')
   const [history, setHistory] = useState<Array<string>>([])
@@ -83,6 +83,27 @@ export function FullTextSearch(): JSX.Element {
 
     return (): void => window.removeEventListener('keydown', handleKeyDown)
   }, [currentHistoryIndex, currentSelectedResult, results])
+
+  useEffect(() => {
+    if (!currentTitle) {
+      return
+    }
+
+    window.electron.ipcRenderer.on('back-link', async () => {
+      const value = `\\[\\[${currentTitle}\\]\\]`
+      setQuery(value)
+      setFocus('fullTextSearch')
+      const res = await window.api.searchFullText(value)
+      setResults(res)
+      if (res.length === 0) {
+        setIsNotFound(true)
+      } else {
+        setIsNotFound(false)
+      }
+    })
+
+    return (): void => window.electron.ipcRenderer.removeAllListeners('back-link')
+  }, [currentTitle, setFocus])
 
   if (focus !== 'fullTextSearch') {
     return <></>
