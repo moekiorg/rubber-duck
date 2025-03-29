@@ -121,6 +121,16 @@ export default function Page(): JSX.Element {
   }, [navigate])
 
   useEffect(() => {
+    window.electron.ipcRenderer.on('file-event:add', async () => {
+      init()
+    })
+
+    return (): void => {
+      window.electron.ipcRenderer.removeAllListeners('file-event:add')
+    }
+  }, [init])
+
+  useEffect(() => {
     window.electron.ipcRenderer.on('delete-file', async (_, id) => {
       const result = await window.api.deleteFile(id)
       if (result) {

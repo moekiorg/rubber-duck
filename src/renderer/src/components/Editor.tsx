@@ -35,6 +35,19 @@ export default function Editor({
     }
   }, 500)
 
+  useEffect(() => {
+    window.electron.ipcRenderer.on('file-event:change', async (_, id, newId) => {
+      if (id === currentFile.id) {
+        const b = await window.api.getBody(newId)
+        setCurrentBody(b)
+      }
+    })
+
+    return (): void => {
+      window.electron.ipcRenderer.removeAllListeners('file-event:change')
+    }
+  }, [currentFile.id])
+
   const handleUpdate = (value: string): void => {
     if (files.find((f) => f !== currentFile && f.title === currentFile?.title)) {
       return
