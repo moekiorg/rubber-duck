@@ -1,43 +1,66 @@
 import { useIntl } from 'react-intl'
-import { useContext } from 'react'
+import { useContext, useEffect, useState } from 'react'
 import { FocusContext } from '@renderer/contexts/FocusContext'
 import { MaterialSymbol } from 'react-material-symbols'
 import 'react-material-symbols/rounded'
+import { useLocation } from 'react-router'
 
-export default function Header({ onCreate }: { onCreate?: () => void }): JSX.Element {
+export default function Header({
+  onCreate,
+  title,
+  isSidebarVisible
+}: {
+  title: string
+  onCreate?: () => void
+  isSidebarVisible: boolean
+}): JSX.Element {
   const intl = useIntl()
   const { toggleFocus } = useContext(FocusContext)
+  const [folder, setFolder] = useState('')
+  const location = useLocation()
+
+  useEffect(() => {
+    window.api.getConfig('path').then((path) => {
+      setFolder(path.split('/').pop()!)
+    })
+  })
 
   return (
     <header>
-      {onCreate && (
+      <div className={`header-title ${isSidebarVisible ? '' : 'header-title--r'}`}>
+        <h2 className="folder">{folder}</h2>
+        <h3 className="file">{title}</h3>
+      </div>
+      <div className="header-btns">
+        {location.pathname !== '/setup' && (
+          <button
+            type="button"
+            className="i-button"
+            onClick={onCreate}
+            aria-label={intl.formatMessage({ id: 'add' })}
+          >
+            <MaterialSymbol weight={300} icon="add" size={22} />
+          </button>
+        )}
+
         <button
           type="button"
           className="i-button"
-          onClick={onCreate}
-          aria-label={intl.formatMessage({ id: 'add' })}
+          onClick={() => toggleFocus('fileSearch')}
+          aria-label={intl.formatMessage({ id: 'searchFile' })}
         >
-          <MaterialSymbol icon="add" size={20} />
+          <MaterialSymbol weight={300} icon="manage_search" size={22} />
         </button>
-      )}
 
-      <button
-        type="button"
-        className="i-button"
-        onClick={() => toggleFocus('fileSearch')}
-        aria-label={intl.formatMessage({ id: 'searchFile' })}
-      >
-        <MaterialSymbol icon="manage_search" size={20} />
-      </button>
-
-      <button
-        type="button"
-        className="i-button"
-        onClick={() => toggleFocus('fullTextSearch')}
-        aria-label={intl.formatMessage({ id: 'searchFullText' })}
-      >
-        <MaterialSymbol icon="search" size={20} />
-      </button>
+        <button
+          type="button"
+          className="i-button"
+          onClick={() => toggleFocus('fullTextSearch')}
+          aria-label={intl.formatMessage({ id: 'searchFullText' })}
+        >
+          <MaterialSymbol weight={300} icon="search" size={22} />
+        </button>
+      </div>
     </header>
   )
 }

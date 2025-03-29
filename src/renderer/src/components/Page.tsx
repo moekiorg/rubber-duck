@@ -206,7 +206,11 @@ export default function Page(): JSX.Element {
       <main>
         <Sidebar files={files} isVisible={isSidebarVisible} />
         <article>
-          <Header onCreate={() => handleCreate()} />
+          <Header
+          isSidebarVisible={isSidebarVisible}
+            title={focus !== 'fullTextSearch' ? currentTitle || '' : ''}
+            onCreate={() => handleCreate()}
+          />
           <FileSearch files={files}></FileSearch>
           <FullTextSearch></FullTextSearch>
           {focus !== 'fullTextSearch' && (
