@@ -13,6 +13,12 @@ export const createMenu = (event, id, title): Electron.Menu => {
       }
     },
     {
+      label: intl.formatMessage({ id: 'duplicate' }),
+      click: (): void => {
+        event.sender.send('duplicate', title)
+      }
+    },
+    {
       type: 'separator'
     },
     {

@@ -64,7 +64,7 @@ export default function Page(): JSX.Element {
   }, [])
 
   const handleCreate = useCallback(
-    async (t = null): Promise<void> => {
+    async (t: string | null = null): Promise<void> => {
       let title: string | null = t
       let counter = 0
       if (!t) {
@@ -179,6 +179,16 @@ export default function Page(): JSX.Element {
     }
   }, [files, handleCreate])
 
+  useEffect(() => {
+    window.electron.ipcRenderer.on('duplicate', (_, title) => {
+      handleCreate(`${title}のコピー`)
+    })
+
+    return (): void => {
+      window.electron.ipcRenderer.removeAllListeners('new')
+    }
+  }, [files, handleCreate])
+
   const handleTitleChange = (title): void => {
     if (!currentFile) {
       return
@@ -207,7 +217,7 @@ export default function Page(): JSX.Element {
         <Sidebar files={files} isVisible={isSidebarVisible} />
         <article>
           <Header
-          isSidebarVisible={isSidebarVisible}
+            isSidebarVisible={isSidebarVisible}
             title={focus !== 'fullTextSearch' ? currentTitle || '' : ''}
             onCreate={() => handleCreate()}
           />

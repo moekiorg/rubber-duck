@@ -8,6 +8,7 @@ export const ja = {
   file: 'ファイル',
   openDir: 'フォルダを開く...',
   new: '新規作成',
+  duplicate: '複製',
   search: 'ファイル検索',
   searchFullText: '全文検索',
   close: '閉じる',
