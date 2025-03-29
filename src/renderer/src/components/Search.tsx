@@ -1,10 +1,11 @@
-import { useState } from 'react'
+import { useContext, useState } from 'react'
 import { NavLink } from 'react-router'
 import { useDebouncedCallback } from 'use-debounce'
 import parse from 'html-react-parser'
 import { FormattedMessage, useIntl } from 'react-intl'
 import sum from 'lodash/sum'
 import scrollIntoView from 'scroll-into-view-if-needed'
+import { FocusContext } from '@renderer/contexts/FocusContext'
 
 type Line = {
   num: number
@@ -16,13 +17,7 @@ export type SearchResult = {
   lines: Array<Line>
 }
 
-export function Search({
-  setIsSearchMode,
-  visible
-}: {
-  visible: boolean
-  setIsSearchMode: (boolean) => void
-}): JSX.Element {
+export function Search(): JSX.Element {
   const [results, setResults] = useState<Array<SearchResult>>([])
   const [query, setQuery] = useState<string>('')
   const [history, setHistory] = useState<Array<string>>([])
@@ -30,6 +25,7 @@ export function Search({
   const intl = useIntl()
   const [isNotFound, setIsNotFound] = useState(false)
   const [currentSelectedResult, setCurrentSelectedResult] = useState(-1)
+  const { focus, setFocus } = useContext(FocusContext)
 
   const handleSearch = useDebouncedCallback(async (e): Promise<void> => {
     if (e.target.value === '') {
@@ -45,7 +41,9 @@ export function Search({
     }
   }, 500)
 
-  if (!visible) {
+  console.log(focus)
+
+  if (focus !== 'fullTextSearch') {
     return <></>
   }
 
@@ -128,7 +126,7 @@ export function Search({
                   to={`/notes/${result.title}`}
                   state={{ title: result.title }}
                   className="fts-title"
-                  onClick={() => setIsSearchMode(false)}
+                  onClick={() => setFocus('editor')}
                 >
                   {result.title}
                 </NavLink>
@@ -143,7 +141,7 @@ export function Search({
                       state={{ title: result.title, line: line.num }}
                       key={result.title + lineIndex}
                       className={`fts-line ${sum(results.slice(0, index).map((result) => result.lines.length)) + lineIndex === currentSelectedResult ? 'fts-line--active' : ''}`}
-                      onClick={() => setIsSearchMode(false)}
+                      onClick={() => setFocus('editor')}
                     >
                       {parse(line.text)}
                     </NavLink>

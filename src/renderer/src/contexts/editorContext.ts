@@ -1,14 +1,20 @@
 import { ReactCodeMirrorRef } from '@uiw/react-codemirror'
-import { createContext } from 'react'
+import { createContext, Dispatch, SetStateAction } from 'react'
 
 interface ContextType {
-  ref: React.RefObject<ReactCodeMirrorRef> | null
+  titleEditor: React.RefObject<HTMLTextAreaElement> | null
+  bodyEditor: React.RefObject<ReactCodeMirrorRef> | null
   isVisible: boolean
   setIsVisible: (value: boolean) => void
+  current: string | null
+  setCurrent: Dispatch<SetStateAction<string | null>>
 }
 
 export const EditorContext = createContext<ContextType>({
-  ref: null,
+  titleEditor: null,
+  bodyEditor: null,
   isVisible: true,
-  setIsVisible: () => {}
+  setIsVisible: () => {},
+  current: null,
+  setCurrent: () => {}
 })

@@ -1,9 +1,10 @@
 import BodyField from './BodyField'
 import TitleField from './TitleField'
-import { RefObject, useContext, useEffect, useState } from 'react'
+import { useContext, useEffect, useState } from 'react'
 import { File } from './Page'
 import { useDebouncedCallback } from 'use-debounce'
 import { EditorContext } from '@renderer/contexts/editorContext'
+import { FocusContext } from '@renderer/contexts/FocusContext'
 
 interface Props {
   currentFile: File
@@ -12,7 +13,6 @@ interface Props {
   setCurrentTitle: (value: string) => void
   currentTitle: string
   onBodyChange: (value: string) => void
-  titleEditor: RefObject<HTMLTextAreaElement>
 }
 
 export default function Editor({
@@ -21,12 +21,12 @@ export default function Editor({
   files,
   setCurrentTitle,
   currentTitle,
-  onBodyChange,
-  titleEditor
+  onBodyChange
 }: Props): JSX.Element {
   const [editorVisible, setEditorVisible] = useState(true)
   const [currentBody, setCurrentBody] = useState('')
-  const { ref: editor } = useContext(EditorContext)
+  const { bodyEditor, titleEditor } = useContext(EditorContext)
+  const { setFocus } = useContext(FocusContext)
 
   const writeFile = useDebouncedCallback(async (t, b, target) => {
     const result = window.api.writeFile(t, b, target)
@@ -50,12 +50,12 @@ export default function Editor({
     }
     if (e.keyCode === 13) {
       e.preventDefault()
-      editor?.current?.view?.focus()
+      bodyEditor?.current?.view?.focus()
       setCurrentBody(`\n${currentBody}`)
     }
     if (e.key === 'ArrowDown') {
       e.preventDefault()
-      editor?.current?.view?.focus()
+      bodyEditor?.current?.view?.focus()
     }
   }
 
@@ -86,22 +86,23 @@ export default function Editor({
       return
     }
     if (e.key === 'ArrowUp') {
-      const view = editor?.current?.view
+      const view = bodyEditor?.current?.view
       if (!view) return
 
       const line = view.state.doc.lineAt(view.state.selection.main.head)
 
       if (line.number === 1) {
         e.preventDefault()
-        titleEditor.current?.focus()
-        titleEditor.current?.setSelectionRange(
-          titleEditor.current.value.length,
-          titleEditor.current.value.length
+        titleEditor?.current?.focus()
+        titleEditor?.current?.setSelectionRange(
+          titleEditor?.current.value.length,
+          titleEditor?.current.value.length
         )
       }
     }
   }
 
+  // エディタの編集履歴をリセットする
   useEffect(() => {
     if (!currentFile) {
       return
@@ -116,11 +117,10 @@ export default function Editor({
   }, [currentFile.title, setCurrentTitle])
 
   return (
-    <div className="editor">
+    <div className="editor" onClick={() => setFocus('editor')}>
       <TitleField
         value={currentTitle || ''}
         onChange={handleTitleChange}
-        editorRef={titleEditor}
         onKeyDown={handleTitleKeyDown}
       />
       {editorVisible && (

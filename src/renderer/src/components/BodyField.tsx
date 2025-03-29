@@ -19,12 +19,12 @@ interface Props {
 window.EditContext = false
 
 export default function BodyField({ value, onChange, onKeyDownCapture }: Props): JSX.Element {
-  const { ref: editorRef, isVisible, setIsVisible } = useContext(EditorContext)
+  const { bodyEditor, isVisible, setIsVisible } = useContext(EditorContext)
 
   useEffect(() => {
     const handleKeyDown = (e): void => {
-      if (e.metaKey && e.key === '1' && editorRef?.current) {
-        editorRef.current.view?.focus()
+      if (e.metaKey && e.key === '1' && bodyEditor?.current) {
+        bodyEditor.current.view?.focus()
       }
       if (e.metaKey && e.key === '0') {
         setIsVisible(false)
@@ -37,21 +37,21 @@ export default function BodyField({ value, onChange, onKeyDownCapture }: Props):
     return (): void => {
       window.removeEventListener('keydown', handleKeyDown)
     }
-  }, [editorRef, setIsVisible])
+  }, [bodyEditor, setIsVisible])
 
   const insertImage = useCallback(
     (name, pos): void => {
-      const state = editorRef?.current?.state
+      const state = bodyEditor?.current?.state
       if (!state) {
         return
       }
-      editorRef.current.view?.dispatch({
+      bodyEditor.current.view?.dispatch({
         changes: { from: pos, insert: `![](${name})` },
         selection: { anchor: pos + 2 }
       })
-      editorRef.current.view?.focus()
+      bodyEditor.current.view?.focus()
     },
-    [editorRef]
+    [bodyEditor]
   )
 
   const handleFileDrop = (e): void => {
@@ -65,7 +65,7 @@ export default function BodyField({ value, onChange, onKeyDownCapture }: Props):
           ;(item as FileSystemFileEntry).file(resolve, reject)
         }).then((file) => {
           window.api.copyFile(file).then(() => {
-            const pos = editorRef?.current?.view?.posAtCoords({
+            const pos = bodyEditor?.current?.view?.posAtCoords({
               x: e.pageX,
               y: e.pageY
             })
@@ -98,7 +98,7 @@ export default function BodyField({ value, onChange, onKeyDownCapture }: Props):
         })
       ]}
       onChange={onChange}
-      ref={editorRef}
+      ref={bodyEditor}
       basicSetup={{
         lineNumbers: false,
         foldGutter: false
