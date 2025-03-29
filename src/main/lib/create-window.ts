@@ -1,7 +1,6 @@
 import { is } from '@electron-toolkit/utils'
 import { BrowserWindow, Menu, shell } from 'electron'
 import { join } from 'path'
-import icon from '../../../build/icon.png?asset'
 import { menu } from '../menu'
 
 export const createWindow = (): BrowserWindow => {
@@ -17,7 +16,6 @@ export const createWindow = (): BrowserWindow => {
       x: 16,
       y: 16
     },
-    ...(process.platform === 'linux' ? { icon } : {}),
     webPreferences: {
       preload: join(__dirname, '../preload/index.cjs'),
       sandbox: false

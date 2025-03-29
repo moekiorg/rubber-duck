@@ -1,4 +1,4 @@
-appId: com.example.textzen
+appId: org.moeki.textzen
 productName: TextZen
 directories:
   buildResources: build
@@ -12,28 +12,11 @@ files:
 asarUnpack:
   - resources/**
   - node_modules/@vscode/ripgrep/bin/rg
-win:
-  executableName: TextZen
-nsis:
-  artifactName: ${name}-${version}-setup.${ext}
-  shortcutName: ${productName}
-  uninstallDisplayName: ${productName}
-  createDesktopShortcut: always
 mac:
   entitlementsInherit: build/entitlements.mac.plist
-  extendInfo:
-    - NSDocumentsFolderUsageDescription: Application requests access to the user's Documents folder.
-    - NSDownloadsFolderUsageDescription: Application requests access to the user's Downloads folder.
-  notarize: false
+  notarize: true
 dmg:
   artifactName: ${name}-${version}.${ext}
-linux:
-  target:
-    - AppImage
-    - snap
-    - deb
-  maintainer: electronjs.org
-  category: Utility
 appImage:
   artifactName: ${name}-${version}.${ext}
 npmRebuild: false
