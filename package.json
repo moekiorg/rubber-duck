@@ -14,9 +14,8 @@
     "typecheck": "npm run typecheck:node && npm run typecheck:web",
     "start": "electron-vite preview",
     "dev": "electron-vite dev",
-    "build": "npm run typecheck && electron-vite build",
     "postinstall": "electron-builder install-app-deps",
-    "build:mac": "electron-vite build && electron-builder --mac"
+    "build": "electron-vite build && electron-builder --mac"
   },
   "dependencies": {
     "@codemirror/lang-markdown": "^6.3.2",
