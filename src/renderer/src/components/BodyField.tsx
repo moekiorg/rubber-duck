@@ -9,7 +9,7 @@ import { internalLink } from '@renderer/lib/internal-link-plugin'
 import { markdownImagePlugin } from '@renderer/lib/markdown-image-plugin'
 import CodeMirror, { EditorView } from '@uiw/react-codemirror'
 import { KeyboardEventHandler, useCallback, useContext, useMemo } from 'react'
-import { dracula, smoothy } from 'thememirror'
+import * as thememirror from 'thememirror'
 
 interface Props {
   value: string
@@ -64,15 +64,15 @@ export default function BodyField({ value, onChange, onKeyDownCapture }: Props):
       window.matchMedia('(prefers-color-scheme: dark)').matches &&
       window.textZen.theme === 'default'
     ) {
-      return dracula
+      return thememirror.dracula
     }
     if (
       window.matchMedia('(prefers-color-scheme: light)').matches &&
       window.textZen.theme === 'default'
     ) {
-      return smoothy
+      return thememirror.tomorrow
     }
-    return smoothy
+    return thememirror[window.textZen.theme]
   }, [])
 
   if (!isVisible) {

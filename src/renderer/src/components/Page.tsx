@@ -231,7 +231,7 @@ export default function Page(): JSX.Element {
             onCreate={() => handleCreate()}
           />
           <FileSearch files={files}></FileSearch>
-          <FullTextSearch></FullTextSearch>
+          <FullTextSearch currentTitle={currentTitle}></FullTextSearch>
           {focus !== 'fullTextSearch' && (
             <>
               {currentFile ? (

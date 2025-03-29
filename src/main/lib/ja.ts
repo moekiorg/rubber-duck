@@ -36,5 +36,6 @@ export const ja = {
   help: 'ヘルプ',
   github: 'GitHub',
   openInDefaultApp: 'アプリで開く',
-  revealInFinder: 'Finderに表示'
+  revealInFinder: 'Finderに表示',
+  backLink: "バックリンク"
 }
