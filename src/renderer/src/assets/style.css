@@ -13,6 +13,7 @@ input {
     --color-bg-primary: rgb(30, 30, 30);
     --color-bg-active: rgb(240, 240, 240, 0.15);
     --color-bg-secondary: rgb(50, 50, 50);
+    --color-highlight-purple: rgb(106, 47, 126);
   }
 }
 
@@ -23,6 +24,7 @@ input {
     --color-bg-primary: rgb(256, 256, 256);
     --color-bg-active: rgb(0, 0, 0, 0.05);
     --color-bg-secondary: rgb(240, 240, 240);
+    --color-highlight-purple: rgb(245, 214, 255);
   }
 }
 
@@ -207,7 +209,7 @@ input[type='checkbox'] {
 }
 
 .highlight {
-  @apply bg-purple-100;
+  @apply bg-[var(--color-highlight-purple)];
 }
 
 .fts {
