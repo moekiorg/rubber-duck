@@ -95,7 +95,7 @@ export default function Sidebar({ files, isVisible }: Props): JSX.Element {
       if (focus !== 'fileList') {
         return
       }
-      if (e.key === 'ArrowDown') {
+      if (e.key === 'ArrowDown' || (e.ctrlKey && e.key == 'n')) {
         const currentEl = document.querySelector<HTMLElement>(`[data-id="${currentListItem}"]`)
         const id = currentEl?.dataset.next
         setCurrentListItem(
@@ -113,7 +113,7 @@ export default function Sidebar({ files, isVisible }: Props): JSX.Element {
           setTimeout(() => setIsEditorVisible(true), 1)
         }
       }
-      if (e.key === 'ArrowUp') {
+      if (e.key === 'ArrowUp' || (e.ctrlKey && e.key == 'p')) {
         const currentEl = document.querySelector<HTMLElement>(`[data-id="${currentListItem}"]`)
         const id = currentEl?.dataset.previous
         setCurrentListItem(

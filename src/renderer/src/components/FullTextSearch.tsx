@@ -50,7 +50,7 @@ export function FullTextSearch(): JSX.Element {
       className="fts"
       onKeyDown={(e) => {
         if (
-          e.key === 'ArrowDown' &&
+          (e.key === 'ArrowDown' || (e.ctrlKey && e.key == 'n')) &&
           currentHistoryIndex === 0 &&
           currentSelectedResult < sum(results.map((result) => result.lines.length)) - 1
         ) {
@@ -62,7 +62,7 @@ export function FullTextSearch(): JSX.Element {
             console.warn(e)
           }
         }
-        if (e.key === 'ArrowUp' && currentSelectedResult > -1) {
+        if ((e.key === 'ArrowUp' || (e.ctrlKey && e.key == 'p')) && currentSelectedResult > -1) {
           setCurrentSelectedResult(currentSelectedResult - 1)
           const el = document.querySelector(`#result-${currentSelectedResult - 1}`)!
           try {
@@ -94,7 +94,7 @@ export function FullTextSearch(): JSX.Element {
               setHistory([query, ...history])
             }
             if (
-              e.key === 'ArrowUp' &&
+              (e.key === 'ArrowUp' || (e.ctrlKey && e.key == 'p')) &&
               currentHistoryIndex < history.length - 1 &&
               currentSelectedResult === -1
             ) {
@@ -102,7 +102,11 @@ export function FullTextSearch(): JSX.Element {
               setQuery(history[currentHistoryIndex + 1])
               setCurrentHistoryindex(currentHistoryIndex + 1)
             }
-            if (e.key === 'ArrowDown' && currentHistoryIndex > 0 && currentSelectedResult === -1) {
+            if (
+              (e.key === 'ArrowDown' || (e.ctrlKey && e.key == 'n')) &&
+              currentHistoryIndex > 0 &&
+              currentSelectedResult === -1
+            ) {
               e.preventDefault()
               setQuery(history[currentHistoryIndex - 1])
               setCurrentHistoryindex(currentHistoryIndex - 1)

@@ -53,7 +53,7 @@ export default function Editor({
       bodyEditor?.current?.view?.focus()
       setCurrentBody(`\n${currentBody}`)
     }
-    if (e.key === 'ArrowDown') {
+    if (e.key === 'ArrowDown' || (e.ctrlKey && e.key == 'n')) {
       e.preventDefault()
       bodyEditor?.current?.view?.focus()
     }
@@ -85,7 +85,7 @@ export default function Editor({
     if (window.textZen.isCompleting) {
       return
     }
-    if (e.key === 'ArrowUp') {
+    if (e.key === 'ArrowUp' || (e.ctrlKey && e.key == 'p')) {
       const view = bodyEditor?.current?.view
       if (!view) return
 
