@@ -1,4 +1,4 @@
-appId: com.example.textzen
+appId: org.moeki.textzen
 productName: TextZen
 directories:
   buildResources: build
