@@ -1,4 +1,4 @@
-import { useContext, useState } from 'react'
+import { useContext, useEffect, useRef, useState } from 'react'
 import { NavLink } from 'react-router'
 import { useDebouncedCallback } from 'use-debounce'
 import parse from 'html-react-parser'
@@ -26,6 +26,7 @@ export function FullTextSearch(): JSX.Element {
   const [isNotFound, setIsNotFound] = useState(false)
   const [currentSelectedResult, setCurrentSelectedResult] = useState(-1)
   const { focus, setFocus } = useContext(FocusContext)
+  const inputRef = useRef<HTMLInputElement>(null)
 
   const handleSearch = useDebouncedCallback(async (e): Promise<void> => {
     if (e.target.value === '') {
@@ -41,41 +42,54 @@ export function FullTextSearch(): JSX.Element {
     }
   }, 500)
 
+  useEffect(() => {
+    const handleKeyDown = (e): void => {
+      if (
+        (e.key === 'ArrowDown' || (e.ctrlKey && e.key == 'n')) &&
+        currentHistoryIndex === 0 &&
+        currentSelectedResult < sum(results.map((result) => result.lines.length)) - 1
+      ) {
+        setCurrentSelectedResult(currentSelectedResult + 1)
+        const el = document.querySelector(`#result-${currentSelectedResult + 1}`)!
+        inputRef.current?.blur()
+        e.preventDefault()
+        try {
+          scrollIntoView(el, { behavior: 'smooth', scrollMode: 'if-needed' })
+        } catch (e) {
+          console.warn(e)
+        }
+      }
+      if ((e.key === 'ArrowUp' || (e.ctrlKey && e.key == 'p')) && currentSelectedResult > -1) {
+        setCurrentSelectedResult(currentSelectedResult - 1)
+        const el = document.querySelector(`#result-${currentSelectedResult - 1}`)!
+        if (currentSelectedResult === 0) {
+          inputRef.current?.focus()
+        } else {
+          inputRef.current?.blur()
+        }
+        e.preventDefault()
+        try {
+          scrollIntoView(el, { behavior: 'smooth', scrollMode: 'if-needed' })
+        } catch (e) {
+          console.warn(e)
+        }
+      }
+      if ((e.key === 'Enter' || e.key === ' ') && currentSelectedResult > -1) {
+        document.querySelector<HTMLAnchorElement>(`#result-${currentSelectedResult}`)!.click()
+      }
+    }
+
+    window.addEventListener('keydown', handleKeyDown)
+
+    return (): void => window.removeEventListener('keydown', handleKeyDown)
+  }, [currentHistoryIndex, currentSelectedResult, results])
+
   if (focus !== 'fullTextSearch') {
     return <></>
   }
 
   return (
-    <div
-      className="fts"
-      onKeyDown={(e) => {
-        if (
-          (e.key === 'ArrowDown' || (e.ctrlKey && e.key == 'n')) &&
-          currentHistoryIndex === 0 &&
-          currentSelectedResult < sum(results.map((result) => result.lines.length)) - 1
-        ) {
-          setCurrentSelectedResult(currentSelectedResult + 1)
-          const el = document.querySelector(`#result-${currentSelectedResult + 1}`)!
-          try {
-            scrollIntoView(el, { behavior: 'smooth', scrollMode: 'if-needed' })
-          } catch (e) {
-            console.warn(e)
-          }
-        }
-        if ((e.key === 'ArrowUp' || (e.ctrlKey && e.key == 'p')) && currentSelectedResult > -1) {
-          setCurrentSelectedResult(currentSelectedResult - 1)
-          const el = document.querySelector(`#result-${currentSelectedResult - 1}`)!
-          try {
-            scrollIntoView(el, { behavior: 'smooth', scrollMode: 'if-needed' })
-          } catch (e) {
-            console.warn(e)
-          }
-        }
-        if ((e.key === 'Enter' || e.key === ' ') && currentSelectedResult > -1) {
-          document.querySelector<HTMLAnchorElement>(`#result-${currentSelectedResult}`)!.click()
-        }
-      }}
-    >
+    <div className="fts">
       <div className="fts-header">
         <input
           className="fts-field"
@@ -84,6 +98,7 @@ export function FullTextSearch(): JSX.Element {
           onChange={(e) => {
             setQuery((e.target as HTMLInputElement).value)
           }}
+          ref={inputRef}
           placeholder={intl.formatMessage({ id: 'searchFullTextPlaceHolder' })}
           onKeyDown={(e) => {
             if (e.key === 'Escape') {

@@ -27,40 +27,42 @@ export default function Header({
 
   return (
     <header>
-      <div className={`header-title ${isSidebarVisible ? '' : 'header-title--r'}`}>
-        <h2 className="folder">{folder}</h2>
-        <h3 className="file">{title}</h3>
-      </div>
-      <div className="header-btns">
-        {location.pathname !== '/setup' && (
-          <button
-            type="button"
-            className="i-button"
-            onClick={onCreate}
-            aria-label={intl.formatMessage({ id: 'add' })}
-          >
-            <MaterialSymbol weight={300} icon="add" size={22} />
-          </button>
-        )}
+      {location.pathname !== '/setup' && (
+        <>
+          <div className={`header-title ${isSidebarVisible ? '' : 'header-title--r'}`}>
+            <h2 className="folder">{folder}</h2>
+            <h3 className="file">{title}</h3>
+          </div>
+          <div className="header-btns">
+            <button
+              type="button"
+              className="i-button"
+              onClick={onCreate}
+              aria-label={intl.formatMessage({ id: 'add' })}
+            >
+              <MaterialSymbol weight={300} icon="add" size={22} />
+            </button>
 
-        <button
-          type="button"
-          className="i-button"
-          onClick={() => toggleFocus('fileSearch')}
-          aria-label={intl.formatMessage({ id: 'searchFile' })}
-        >
-          <MaterialSymbol weight={300} icon="manage_search" size={22} />
-        </button>
+            <button
+              type="button"
+              className="i-button"
+              onClick={() => toggleFocus('fileSearch')}
+              aria-label={intl.formatMessage({ id: 'searchFile' })}
+            >
+              <MaterialSymbol weight={300} icon="manage_search" size={22} />
+            </button>
 
-        <button
-          type="button"
-          className="i-button"
-          onClick={() => toggleFocus('fullTextSearch')}
-          aria-label={intl.formatMessage({ id: 'searchFullText' })}
-        >
-          <MaterialSymbol weight={300} icon="search" size={22} />
-        </button>
-      </div>
+            <button
+              type="button"
+              className="i-button"
+              onClick={() => toggleFocus('fullTextSearch')}
+              aria-label={intl.formatMessage({ id: 'searchFullText' })}
+            >
+              <MaterialSymbol weight={300} icon="search" size={22} />
+            </button>
+          </div>
+        </>
+      )}
     </header>
   )
 }

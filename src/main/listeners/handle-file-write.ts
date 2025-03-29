@@ -27,6 +27,7 @@ export const handleFileWrite = async (
     return false
   }
 
+  globalThis.lastWriteTime = Date.now()
   if (newFilePath !== oldFilePath) {
     await promises.rename(oldFilePath, newFilePath)
     if (store.get('edit.linkAutoUpdate')) {

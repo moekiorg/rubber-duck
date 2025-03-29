@@ -21,7 +21,7 @@ export default function FileSearch({ files }: Props): JSX.Element {
   const [selectedIndex, setSelectedIndex] = useState(-1)
 
   useEffect(() => {
-    window.addEventListener('click', (e) => {
+    const handleClick = (e): void => {
       if (
         !(e.target as HTMLElement).closest('.fs') &&
         focus === 'fileSearch' &&
@@ -31,11 +31,19 @@ export default function FileSearch({ files }: Props): JSX.Element {
       ) {
         setFocus('editor')
       }
-    })
+    }
+    window.addEventListener('click', handleClick)
+
+    return (): void => {
+      window.removeEventListener('click', handleClick)
+    }
   }, [focus, intl, setFocus])
 
   const updateSelection = useCallback(
     (e): void => {
+      if (focus !== 'fileSearch') {
+        return
+      }
       if (
         (e.key === 'ArrowDown' || (e.ctrlKey && e.key == 'n')) &&
         selectedIndex < results.length - 1
@@ -56,16 +64,17 @@ export default function FileSearch({ files }: Props): JSX.Element {
         searchField.current?.focus()
         e.preventDefault()
       }
-      if (e.key === 'Enter') {
+      if (e.key === 'Enter' && !e.isComposing) {
         e.preventDefault()
         document.querySelector<HTMLElement>(`[data-index="${selectedIndex}"]`)?.click()
+        setFocus('editor')
       }
       if (e.key === 'Escape') {
         e.preventDefault()
         setFocus('editor')
       }
     },
-    [selectedIndex, results.length, setFocus]
+    [focus, selectedIndex, results.length, setFocus]
   )
 
   useEffect(() => {
@@ -99,28 +108,30 @@ export default function FileSearch({ files }: Props): JSX.Element {
           value={query || ''}
           type="text"
           ref={searchField}
-          placeholder={intl.formatMessage({ id: 'searchFile' })}
+          placeholder={intl.formatMessage({ id: 'searchFilePlaceHolder' })}
           autoFocus
           onChange={handleQueryChange}
           className="fs-f"
         />
       </div>
-      <div className="fs-l">
-        {results.slice(0, 100).map((result, index) => (
-          <div className="fs-i-w" key={result.title}>
-            <NavLink
-              to={`/notes/${result.title}`}
-              state={{ title: result.title, force: true }}
-              replace
-              data-index={index}
-              id={result.title}
-              className={`fs-i ${index === selectedIndex ? 'fs-i--active' : ''}`}
-            >
-              {result.title}
-            </NavLink>
-          </div>
-        ))}
-      </div>
+      {results.length > 0 && (
+        <div className="fs-l">
+          {results.slice(0, 100).map((result, index) => (
+            <div className="fs-i-w" key={result.title}>
+              <NavLink
+                to={`/notes/${result.title}`}
+                state={{ title: result.title, force: true }}
+                replace
+                data-index={index}
+                id={result.title}
+                className={`fs-i ${index === selectedIndex ? 'fs-i--active' : ''}`}
+              >
+                {result.title}
+              </NavLink>
+            </div>
+          ))}
+        </div>
+      )}
     </div>
   )
 }

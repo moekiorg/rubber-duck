@@ -2,9 +2,25 @@ import { Menu, shell } from 'electron'
 import { intl } from './intl'
 import { join } from 'path'
 import { store } from './store'
+import { mainWindow } from '..'
 
 export const createMenu = (event, id, title): Electron.Menu => {
   return Menu.buildFromTemplate([
+    {
+      label: intl.formatMessage({ id: 'new' }),
+      click: (): void => {
+        mainWindow?.webContents.send('new')
+      }
+    },
+    {
+      label: intl.formatMessage({ id: 'duplicate' }),
+      click: (): void => {
+        event.sender.send('duplicate', title)
+      }
+    },
+    {
+      type: 'separator'
+    },
     {
       label: intl.formatMessage({ id: 'openInDefaultApp' }),
       click: (): void => {

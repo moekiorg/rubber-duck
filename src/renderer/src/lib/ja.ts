@@ -1,6 +1,7 @@
 export const ja = {
   openFolder: 'フォルダを開く',
   searchFile: 'ファイル検索',
+  searchFilePlaceHolder: 'ファイルを名前で検索',
   searchFullText: '全文検索',
   searchFullTextPlaceHolder: '検索(履歴↑↓)',
   add: '新規作成',

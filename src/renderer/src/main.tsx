@@ -13,6 +13,8 @@ try {
   console.warn(e)
 }
 
+window.textZen.theme = await window.api.getConfig('view.theme')
+
 ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
   <React.StrictMode>
     <App />

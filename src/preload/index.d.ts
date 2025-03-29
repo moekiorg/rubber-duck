@@ -6,6 +6,7 @@ interface TextZen {
   files: Array<FileType>
   isCompleting: boolean
   path: string
+  theme: string
 }
 
 interface API {

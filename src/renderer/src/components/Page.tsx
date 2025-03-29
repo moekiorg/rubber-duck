@@ -44,14 +44,10 @@ export default function Page(): JSX.Element {
 
   useEffect(() => {
     window.electron.ipcRenderer.on('toggle-search-full-text', () => {
-      if (focus !== 'fullTextSearch') {
-        setFocus('fullTextSearch')
-      } else {
-        setFocus('editor')
-      }
+      toggleFocus('fullTextSearch')
       document.querySelector('article')!.scrollTo(0, 0)
     })
-  }, [focus, setFocus])
+  }, [focus, setFocus, toggleFocus])
 
   useEffect(() => {
     window.api.getConfig('view.sidebar.visible').then((value) => {
@@ -64,7 +60,7 @@ export default function Page(): JSX.Element {
   }, [])
 
   const handleCreate = useCallback(
-    async (t = null): Promise<void> => {
+    async (t: string | null = null): Promise<void> => {
       let title: string | null = t
       let counter = 0
       if (!t) {
@@ -119,6 +115,16 @@ export default function Page(): JSX.Element {
         navigate('/setup', { replace: true })
       })
   }, [navigate])
+
+  useEffect(() => {
+    window.electron.ipcRenderer.on('file-event:add', async () => {
+      init()
+    })
+
+    return (): void => {
+      window.electron.ipcRenderer.removeAllListeners('file-event:add')
+    }
+  }, [init])
 
   useEffect(() => {
     window.electron.ipcRenderer.on('delete-file', async (_, id) => {
@@ -179,6 +185,16 @@ export default function Page(): JSX.Element {
     }
   }, [files, handleCreate])
 
+  useEffect(() => {
+    window.electron.ipcRenderer.on('duplicate', (_, title) => {
+      handleCreate(`${title}のコピー`)
+    })
+
+    return (): void => {
+      window.electron.ipcRenderer.removeAllListeners('new')
+    }
+  }, [files, handleCreate])
+
   const handleTitleChange = (title): void => {
     if (!currentFile) {
       return
@@ -198,8 +214,11 @@ export default function Page(): JSX.Element {
   useEffect(() => {
     if (location.state?.force) {
       setFocus('editor')
+      setTimeout(() => {
+        bodyEditor?.current?.view?.focus()
+      }, 100)
     }
-  }, [location, setFocus])
+  }, [bodyEditor, location, setFocus])
 
   return (
     <>
@@ -207,7 +226,7 @@ export default function Page(): JSX.Element {
         <Sidebar files={files} isVisible={isSidebarVisible} />
         <article>
           <Header
-          isSidebarVisible={isSidebarVisible}
+            isSidebarVisible={isSidebarVisible}
             title={focus !== 'fullTextSearch' ? currentTitle || '' : ''}
             onCreate={() => handleCreate()}
           />
